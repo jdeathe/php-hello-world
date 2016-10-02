@@ -31,19 +31,19 @@
   </head>
   <body>
     <div class="container">
-      <div class="hello-banner">
-        <h1><?php print 'Hello, world!'; ?></h1>
-        <p>This CentOS / Apache / PHP <?php print PHP_SAPI === 'cgi-fcgi' ? '(FastCGI)' : '(Standard)'; ?> service is running in a container.</p>
 <?php
   // Example method to detect SSL Offloaded requests
-  if (array_key_exists('SERVER_PORT', $_SERVER) && $_SERVER['SERVER_PORT'] === '8443' && 
+  if (TRUE || array_key_exists('SERVER_PORT', $_SERVER) && $_SERVER['SERVER_PORT'] === '8443' && 
       array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
       $_SERVER['HTTPS'] = 'on';
 ?>
-        <p>SSL Termination has been carried out on the load balancer. To detect HTTPS requestes use: <code>$_SERVER['PORT'] === '8443'</code> AND <code>$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'</code>.</p>
+      <div class="alert alert-info">SSL Termination has been carried out on the load balancer.</div>
 <?php
   }
 ?>
+      <div class="hello-banner">
+        <h1><?php print 'Hello, world!'; ?></h1>
+        <p>This CentOS / Apache / PHP <?php print PHP_SAPI === 'cgi-fcgi' ? '(FastCGI)' : '(Standard)'; ?> service is running in a container.</p>
         <p class="lead">
 <?php
   if (realpath(
