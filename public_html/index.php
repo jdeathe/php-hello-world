@@ -33,7 +33,7 @@
     <div class="container">
       <div class="hello-banner">
         <h1><?php print 'Hello, world!'; ?></h1>
-        <p>This CentOS / Apache / PHP <?php print PHP_SAPI === 'cgi-fcgi' ? '(FastCGI)' : '(Standard)'; ?> service is running in a Docker container.</p>
+        <p>This CentOS / Apache / PHP <?php print PHP_SAPI === 'cgi-fcgi' ? '(FastCGI)' : '(Standard)'; ?> service is running in a container.</p>
 <?php
   // Example method to detect SSL Offloaded requests
   if (array_key_exists('SERVER_PORT', $_SERVER) && $_SERVER['SERVER_PORT'] === '8443' && 
