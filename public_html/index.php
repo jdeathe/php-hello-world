@@ -1,3 +1,22 @@
+<?php
+namespace jdeathe\PhpHelloWorld;
+
+use jdeathe\PhpHelloWorld\Output\Html;
+use jdeathe\PhpHelloWorld\Settings\IniSettings;
+
+require_once 'Output/Html.php';
+require_once 'Settings/IniSettings.php';
+
+$viewSettings = new IniSettings(
+    sprintf(
+        '../etc/views/%s.ini',
+        basename(
+            __FILE__,
+            '.php'
+        )
+    )
+);
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,7 +24,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title>Bootstrap PHP Hello World</title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -32,22 +51,22 @@
   <body>
     <div class="container">
 <?php
-  // Example method to detect SSL Offloaded requests
+  // Example method to detect SSL/TLS offloaded requests
   if (array_key_exists('SERVER_PORT', $_SERVER) && $_SERVER['SERVER_PORT'] === '8443' && 
       array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
       $_SERVER['HTTPS'] = 'on';
 ?>
-      <div class="alert alert-info">SSL Termination has been carried out on the load balancer.</div>
+      <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'TLS termination has been carried out on the load balancer.')); ?></div>
 <?php
   }
 ?>
       <div class="hello-banner">
-        <h1><?php print 'Hello, world!'; ?></h1>
-        <p>This CentOS / Apache / PHP <?php print PHP_SAPI === 'cgi-fcgi' ? '(FastCGI)' : '(Standard)'; ?> service is running in a container.</p>
+        <h1><?php Html::printEncoded($viewSettings->get('heading', 'Hello, World!')); ?></h1>
+        <p><?php Html::printfEncoded($viewSettings->get('description'), array(PHP_SAPI)); ?></p>
         <p class="lead">
 <?php
   if (realpath(
-      dirname(__FILE__) . "/_phpinfo.php"
+      __DIR__ . "/_phpinfo.php"
   )) {
 ?>
           <a href="/_phpinfo.php" class="btn btn-lg btn-primary">PHP info</a>
@@ -55,14 +74,15 @@
   }
   if (extension_loaded('apc') &&
       realpath(
-        dirname(__FILE__) . "/_apc.php"
+        __DIR__ . "/_apc.php"
       )
   ) {
 ?>
           <a href="/_apc.php" class="btn btn-lg btn-default">APC info</a>
 <?php
   }
-  if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
+  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
 ?>
           <a href="/server-status" class="btn btn-lg btn-default">Apache status</a>
 <?php
