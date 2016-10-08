@@ -1,5 +1,4 @@
 <?php
-
 namespace jdeathe\PhpHelloWorld;
 
 use jdeathe\PhpHelloWorld\Output\Html;
@@ -17,7 +16,6 @@ $viewSettings = new IniSettings(
         )
     )
 );
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,7 +81,7 @@ $viewSettings = new IniSettings(
           <a href="/_apc.php" class="btn btn-lg btn-default">APC info</a>
 <?php
   }
-  if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
+  if (array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
 ?>
           <a href="/server-status" class="btn btn-lg btn-default">Apache status</a>
 <?php
