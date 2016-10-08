@@ -1,3 +1,24 @@
+<?php
+
+namespace jdeathe\PhpHelloWorld;
+
+use jdeathe\PhpHelloWorld\Output\Html;
+use jdeathe\PhpHelloWorld\Settings\IniSettings;
+
+require_once 'Output/Html.php';
+require_once 'Settings/IniSettings.php';
+
+$viewSettings = new IniSettings(
+    sprintf(
+        '../etc/views/%s.ini',
+        basename(
+            __FILE__,
+            '.php'
+        )
+    )
+);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,7 +26,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title>Bootstrap PHP Hello World</title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'Bootstrap PHP Hello World')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -37,13 +58,13 @@
       array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
       $_SERVER['HTTPS'] = 'on';
 ?>
-      <div class="alert alert-info">SSL Termination has been carried out on the load balancer.</div>
+      <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'TLS termination has been carried out on the load balancer.')); ?></div>
 <?php
   }
 ?>
       <div class="hello-banner">
-        <h1><?php print 'Hello, world!'; ?></h1>
-        <p>This CentOS / Apache / PHP <?php print PHP_SAPI === 'cgi-fcgi' ? '(FastCGI)' : '(Standard)'; ?> service is running in a container.</p>
+        <h1><?php Html::printEncoded($viewSettings->get('heading', 'Hello, World!')); ?></h1>
+        <p><?php Html::printfEncoded($viewSettings->get('description'), array(PHP_SAPI)); ?></p>
         <p class="lead">
 <?php
   if (realpath(
