@@ -81,7 +81,8 @@ $viewSettings = new IniSettings(
           <a href="/_apc.php" class="btn btn-lg btn-default">APC info</a>
 <?php
   }
-  if (array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
+  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
 ?>
           <a href="/server-status" class="btn btn-lg btn-default">Apache status</a>
 <?php
