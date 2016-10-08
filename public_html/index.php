@@ -51,7 +51,7 @@ $viewSettings = new IniSettings(
   <body>
     <div class="container">
 <?php
-  // Example method to detect SSL Offloaded requests
+  // Example method to detect SSL/TLS offloaded requests
   if (array_key_exists('SERVER_PORT', $_SERVER) && $_SERVER['SERVER_PORT'] === '8443' && 
       array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
       $_SERVER['HTTPS'] = 'on';
@@ -66,7 +66,7 @@ $viewSettings = new IniSettings(
         <p class="lead">
 <?php
   if (realpath(
-      dirname(__FILE__) . "/_phpinfo.php"
+      __DIR__ . "/_phpinfo.php"
   )) {
 ?>
           <a href="/_phpinfo.php" class="btn btn-lg btn-primary">PHP info</a>
@@ -74,7 +74,7 @@ $viewSettings = new IniSettings(
   }
   if (extension_loaded('apc') &&
       realpath(
-        dirname(__FILE__) . "/_apc.php"
+        __DIR__ . "/_apc.php"
       )
   ) {
 ?>
