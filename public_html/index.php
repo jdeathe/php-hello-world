@@ -24,7 +24,7 @@ $viewSettings = new IniSettings(
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title><?php Html::printEncoded($viewSettings->get('title', 'Bootstrap PHP Hello World')); ?></title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
