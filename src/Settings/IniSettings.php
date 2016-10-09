@@ -29,7 +29,9 @@ class IniSettings implements SettingsInterface {
             );
         }
 
-        $this->path = $path;
+        $this->path = stream_resolve_include_path(
+            $path
+        );
     }
 
     /**
@@ -68,11 +70,13 @@ class IniSettings implements SettingsInterface {
      */
     public function parse()
     {
-      $this->settings = parse_ini_file(
-          stream_resolve_include_path(
-              $this->path
-          ),
-          false
-      );
+        if ((string) $this->path === '') {
+            return null;
+        }
+
+        $this->settings = parse_ini_file(
+            $this->path,
+            false
+        );
     }
 }
