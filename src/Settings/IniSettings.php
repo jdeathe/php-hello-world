@@ -16,8 +16,8 @@ class IniSettings implements SettingsInterface {
     protected $path = '';
 
     /**
-    * @param string $path Path to settings file (absolute or relative to include_path).
-    */
+     * @param string $path Path to settings file (absolute or relative to include_path).
+     */
     public function __construct($path)
     {
         if (!is_string($path) || mb_strpos($path, DIRECTORY_SEPARATOR) === false) {
@@ -33,9 +33,9 @@ class IniSettings implements SettingsInterface {
     }
 
     /**
-    * @param string $key Setting key.
-    * @param string|null $default Value to return if $key is not found.
-    */
+     * @param string $key Setting key.
+     * @param string|null $default Value to return if $key is not found.
+     */
     public function get($key, $default = null)
     {
         if (empty($this->settings)) {
@@ -50,9 +50,9 @@ class IniSettings implements SettingsInterface {
     }
 
     /**
-    * Return the settings array.
-    * @return array
-    */
+     * Return the settings array.
+     * @return array
+     */
     public function getAll()
     {
         if (empty($this->settings)) {
@@ -63,9 +63,9 @@ class IniSettings implements SettingsInterface {
     }
 
     /**
-		* Parse the settings file.
-		* @return void
-		*/
+     * Parse the settings file.
+     * @return void
+     */
     public function parse()
     {
       $this->settings = parse_ini_file(
@@ -75,5 +75,4 @@ class IniSettings implements SettingsInterface {
           false
       );
     }
-    
 }
