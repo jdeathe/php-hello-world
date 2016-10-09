@@ -44,7 +44,6 @@ $viewSettings = new IniSettings(
 
     <style type="text/css">
       body {margin: 0; padding-top: 50px;}
-      .embed-flow iframe {position: absolute;}
     </style>
   </head>
   <body>
@@ -61,7 +60,7 @@ $viewSettings = new IniSettings(
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">PHP info<span class="sr-only"> (current)</span></a></li>
+            <li><a href="/_phpinfo.php">PHP info</a></li>
 <?php
   if (extension_loaded('apc') &&
       realpath(
@@ -69,7 +68,7 @@ $viewSettings = new IniSettings(
       )
   ) {
 ?>
-            <li><a href="/_apcinfo.php">APC info</a></li>
+            <li class="active"><a href="#">APC info<span class="sr-only"> (current)</span></a></li>
 <?php
   }
   if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
@@ -83,10 +82,12 @@ $viewSettings = new IniSettings(
         </div>
       </div>
     </nav>
-    <div class="container-flow">
-      <div class="embed-flow">
-        <iframe src="/_apc.php" frameborder="0" width="100%" height="100%"></iframe>
-      </div>
+    <div class="container">
+        <div class="table-responsive">
+<?php
+  Info::php();
+?>
+        </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
