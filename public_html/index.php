@@ -78,7 +78,7 @@ $viewSettings = new IniSettings(
       )
   ) {
 ?>
-          <a href="/_apc.php" class="btn btn-lg btn-default">APC info</a>
+          <a href="/_apcinfo.php" class="btn btn-lg btn-default">APC info</a>
 <?php
   }
   if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&

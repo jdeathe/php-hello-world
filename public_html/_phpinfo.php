@@ -44,7 +44,6 @@ $viewSettings = new IniSettings(
 
     <style type="text/css">
       body {margin: 0; padding-top: 50px;}
-      .embed-flow iframe {position: absolute;}
     </style>
   </head>
   <body>
@@ -83,10 +82,12 @@ $viewSettings = new IniSettings(
         </div>
       </div>
     </nav>
-    <div class="container-flow">
-      <div class="embed-flow">
-        <iframe src="/_apc.php" frameborder="0" width="100%" height="100%"></iframe>
-      </div>
+    <div class="container">
+        <div class="table-responsive">
+<?php
+  Info::php();
+?>
+        </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
