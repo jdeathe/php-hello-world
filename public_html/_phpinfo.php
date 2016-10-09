@@ -68,7 +68,7 @@ $viewSettings = new IniSettings(
       )
   ) {
 ?>
-            <li><a href="/_apc.php">APC info</a></li>
+            <li><a href="/_apcinfo.php">APC info</a></li>
 <?php
   }
   if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&

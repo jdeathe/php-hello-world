@@ -15,36 +15,38 @@ class Info
      */
     public static function php()
     {
+        $matches = array();
+
         ob_start();
         phpinfo();
-        $htmlDom = \DOMDocument::loadHTML(
-            ob_get_contents()
+        preg_match(
+            '~<body[^>]*>(.*)</body>~ims',
+            ob_get_contents(),
+            $matches
         );
         ob_end_clean();
 
-        foreach ($htmlDom->getElementsByTagName('body')->item(0)->childNodes as $childNode) {
-            self::$phpinfo .= $htmlDom->saveHTML($childNode);
+        if (isset($matches[1]) && is_string($matches[1])) {
+            self::$phpinfo = preg_replace(
+                array(
+                    '~<font~',
+                    '~</font>~',
+                    '~border="0" cellpadding="3"~',
+                    '~<tr class="h"><th>~',
+                    '~</th></tr>~',
+                    '~</table>~'
+                ),
+                array(
+                    '<span',
+                    '</span>',
+                    'class="table table-condensed table-hover"',
+                    '<thead><tr><th>',
+                    '</th></tr></thead><tbody>',
+                    '</tbody></table>'
+                ),
+                $matches[1]
+            );
         }
-
-        self::$phpinfo = preg_replace(
-            array(
-                '~<font~',
-                '~</font>~',
-                '~border="0" cellpadding="3"~',
-                '~<tr class="h"><th>~',
-                '~</th></tr>~',
-                '~</table>~'
-            ),
-            array(
-                '<span',
-                '</span>',
-                'class="table table-condensed table-hover"',
-                '<thead><tr><th>',
-                '</th></tr></thead><tbody>',
-                '</tbody></table>'
-            ),
-            self::$phpinfo
-        );
 
         print self::$phpinfo;
     }
