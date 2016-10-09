@@ -17,13 +17,13 @@ class Info
     {
         ob_start();
         phpinfo();
-        $htmlDom = \DOMDocument::loadHTML(
+        $document = \DOMDocument::loadHTML(
             ob_get_contents()
         );
         ob_end_clean();
 
-        foreach ($htmlDom->getElementsByTagName('body')->item(0)->childNodes as $childNode) {
-            self::$phpinfo .= $htmlDom->saveHTML($childNode);
+        foreach ($document->getElementsByTagName('body')->item(0)->childNodes as $childNode) {
+            self::$phpinfo .= $document->saveXML($childNode);
         }
 
         self::$phpinfo = preg_replace(
