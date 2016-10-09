@@ -20,7 +20,7 @@ class IniSettings implements SettingsInterface {
      */
     public function __construct($path)
     {
-        if (!is_string($path) || mb_strpos($path, DIRECTORY_SEPARATOR) === false) {
+        if (!is_string($path) || preg_match('~^[^\0]+$~', $path) !== 1) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Invalid file path provided: %s',
