@@ -60,7 +60,6 @@ $viewSettings = new IniSettings(
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <!-- <li><a href="/index.php">Home</a></li> -->
             <li class="active"><a href="#">PHP info<span class="sr-only"> (current)</span></a></li>
 <?php
   if (extension_loaded('apc') &&
