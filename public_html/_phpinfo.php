@@ -44,6 +44,7 @@ $viewSettings = new IniSettings(
 
     <style type="text/css">
       body {margin: 0; padding-top: 50px;}
+      td.v {max-width: 300px; overflow-x: auto;}
     </style>
   </head>
   <body>
