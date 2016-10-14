@@ -52,8 +52,11 @@ $viewSettings = new IniSettings(
     <div class="container">
 <?php
   // Example method to detect SSL/TLS offloaded requests
-  if (array_key_exists('SERVER_PORT', $_SERVER) && $_SERVER['SERVER_PORT'] === '8443' && 
-      array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+  if (array_key_exists('SERVER_PORT', $_SERVER) &&
+      $_SERVER['SERVER_PORT'] === '8443' &&
+      array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) &&
+      $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'
+  ) {
       $_SERVER['HTTPS'] = 'on';
 ?>
       <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'TLS termination has been carried out on the load balancer.')); ?></div>
@@ -81,10 +84,21 @@ $viewSettings = new IniSettings(
           <a href="/_apcinfo.php" class="btn btn-lg btn-default">APC info</a>
 <?php
   }
-  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
+  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) &&
+      strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) &&
+      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
+  ) {
 ?>
           <a href="/server-status" class="btn btn-lg btn-default">Apache status</a>
+<?php
+  }
+  if (PHP_SAPI === 'fpm-fcgi' &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) &&
+      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
+  ) {
+?>
+          <a href="/status?full" class="btn btn-lg btn-default">PHP-FPM status</a>
 <?php
   }
 ?>

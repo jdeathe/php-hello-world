@@ -72,10 +72,21 @@ $viewSettings = new IniSettings(
             <li><a href="/_apcinfo.php">APC info</a></li>
 <?php
   }
-  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
+  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) &&
+      strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) &&
+      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
+  ) {
 ?>
             <li><a href="/server-status">Apache status</a></li>
+<?php
+  }
+  if (PHP_SAPI === 'fpm-fcgi' &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) &&
+      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
+  ) {
+?>
+            <li><a href="/status?full">PHP-FPM status</a></li>
 <?php
   }
 ?>
