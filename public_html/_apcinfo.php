@@ -1,13 +1,19 @@
 <?php
 namespace jdeathe\PhpHelloWorld;
 
+use jdeathe\PhpHelloWorld\Http\ServerRequest;
 use jdeathe\PhpHelloWorld\Output\Html;
 use jdeathe\PhpHelloWorld\Output\Info;
 use jdeathe\PhpHelloWorld\Settings\IniSettings;
 
+require_once 'Http/ServerRequest.php';
 require_once 'Output/Html.php';
 require_once 'Output/Info.php';
 require_once 'Settings/IniSettings.php';
+
+$serverRequest = new ServerRequest(
+    $_SERVER
+);
 
 $viewSettings = new IniSettings(
     sprintf(
@@ -95,6 +101,14 @@ $viewSettings = new IniSettings(
       </div>
     </nav>
     <div class="container-flow">
+<?php
+  // Example method to detect SSL/TLS offloaded requests
+  if ($serverRequest->isTlsTerminated()) {
+?>
+      <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
+<?php
+  }
+?>
       <div class="embed-flow">
         <iframe src="/_apc.php" frameborder="0" width="100%" height="100%"></iframe>
       </div>
