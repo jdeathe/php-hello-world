@@ -173,10 +173,13 @@ class ServerRequest
         if (array_key_exists(
                 'HTTPS',
                 $this->serverParams
-            ) && 
+            ) &&
+            ! empty(
+                $this->serverParams['HTTPS']
+            ) &&
             strtolower(
                 $this->serverParams['HTTPS']
-            ) === 'on'
+            ) !== 'off'
         ) {
             return true;
         }
@@ -187,9 +190,9 @@ class ServerRequest
     /**
      * Check if request was SSL/TLS terminated upstream.
      *
-		 * For valid SSL/TLS termination the upstream service must set the 
-		 * X-Forwarded-Proto header to 'https' and make requests via port 8443.
-		 *
+     * For valid SSL/TLS termination the upstream service must set the 
+     * X-Forwarded-Proto header to 'https' and make requests via port 8443.
+     *
      * @return boolean
      */
     public function isTlsTerminated()
