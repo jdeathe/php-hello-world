@@ -1,7 +1,7 @@
 <?php
 namespace jdeathe\PhpHelloWorld\Http;
 
-class ServerRequest
+class Request
 {
     const SECURE_SERVER_PORT = '8443';
     const SECURE_REQUEST_HEADER = 'X-Forwarded-Proto';
