@@ -128,32 +128,6 @@ $viewSettings = new IniSettings(
           <a href="/_phpinfo.php" class="btn btn-lg btn-primary">PHP info</a>
 <?php
   }
-  if (extension_loaded('apc') &&
-      realpath(
-        __DIR__ . "/_apc.php"
-      )
-  ) {
-?>
-          <a href="/_apcinfo.php" class="btn btn-lg btn-default">APC info</a>
-<?php
-  }
-  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) &&
-      strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) &&
-      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
-  ) {
-?>
-          <a href="/server-status" class="btn btn-lg btn-default">Apache status</a>
-<?php
-  }
-  if (PHP_SAPI === 'fpm-fcgi' &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) &&
-      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
-  ) {
-?>
-          <a href="/status?full" class="btn btn-lg btn-default">PHP-FPM status</a>
-<?php
-  }
 ?>
         </p>
       </div>
