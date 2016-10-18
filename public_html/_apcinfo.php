@@ -49,7 +49,7 @@ $viewSettings = new IniSettings(
     <![endif]-->
 
     <style type="text/css">
-      body {margin: 0; padding-top: 50px;}
+      body {margin: 0; padding-top: 71px;}
       .embed-flow iframe {position: absolute;}
     </style>
   </head>

@@ -48,8 +48,8 @@ $viewSettings = new IniSettings(
 
     <style type="text/css">
       html, body {background-color: #333; height: 100%; font-family: sans-serif;}
-      body {margin: 0; padding-top: 101px; color: #fff; box-shadow: inset 0 0 100px rgba(0,0,0,.5);}
-      .hello-banner {padding: 40px 15px; text-align: center; background-color: #222; border-radius: 6px;}
+      body {margin: 0; padding-top: 71px; color: #fff; box-shadow: inset 0 0 100px rgba(0,0,0,.5);}
+      .hello-banner {margin-top: 50px; padding: 40px 15px; text-align: center; background-color: #222; border-radius: 6px;}
       .hello-banner h1 {font-size: 63px;}
       .hello-banner p {margin-bottom: 15px; font-size: 21px; font-weight: 200;}
     </style>
