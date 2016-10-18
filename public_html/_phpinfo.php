@@ -67,8 +67,14 @@ $viewSettings = new IniSettings(
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
+<?php
+  if (realpath(
+      __DIR__ . "/_phpinfo.php"
+  )) {
+?>
             <li class="active"><a href="#">PHP info<span class="sr-only"> (current)</span></a></li>
 <?php
+  }
   if (extension_loaded('apc') &&
       realpath(
         __DIR__ . "/_apc.php"
