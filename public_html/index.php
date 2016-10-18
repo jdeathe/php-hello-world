@@ -48,13 +48,59 @@ $viewSettings = new IniSettings(
 
     <style type="text/css">
       html, body {background-color: #333; height: 100%; font-family: sans-serif;}
-      body {margin: 0; padding-top: 50px; color: #fff; box-shadow: inset 0 0 100px rgba(0,0,0,.5);}
+      body {margin: 0; padding-top: 101px; color: #fff; box-shadow: inset 0 0 100px rgba(0,0,0,.5);}
       .hello-banner {padding: 40px 15px; text-align: center; background-color: #222; border-radius: 6px;}
       .hello-banner h1 {font-size: 63px;}
       .hello-banner p {margin-bottom: 15px; font-size: 21px; font-weight: 200;}
     </style>
   </head>
   <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/index.php"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/_phpinfo.php">PHP info</a></li>
+<?php
+  if (extension_loaded('apc') &&
+      realpath(
+        __DIR__ . "/_apc.php"
+      )
+  ) {
+?>
+            <li><a href="/_apcinfo.php">APC info</a></li>
+<?php
+  }
+  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) &&
+      strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) &&
+      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
+  ) {
+?>
+            <li><a href="/server-status">Apache status</a></li>
+<?php
+  }
+  if (PHP_SAPI === 'fpm-fcgi' &&
+      array_key_exists('REMOTE_ADDR', $_SERVER) &&
+      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
+  ) {
+?>
+            <li><a href="/status?full">PHP-FPM status</a></li>
+<?php
+  }
+?>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class="container">
 <?php
   // Example method to detect SSL/TLS offloaded requests
