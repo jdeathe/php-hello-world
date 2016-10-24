@@ -39,7 +39,7 @@ class Info
                 array(
                     '<span',
                     '</span>',
-                    '<table class="table table-condensed table-hover">',
+                    '<table class="table table-condensed">',
                     '<thead><tr><th class="col-xs-4">',
                     '</th></tr></thead><tbody>',
                     '</tbody></table>'
