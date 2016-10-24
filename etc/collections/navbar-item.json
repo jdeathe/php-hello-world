@@ -1,0 +1,67 @@
+{
+	"data": [{
+		"type": "navbar-item",
+		"id": "1",
+		"attributes": {
+			"label": "PHP info",
+			"url": "/_phpinfo.php",
+			"condition": {
+				"function": [
+					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
+					"visible"
+				],
+				"parameter": [
+					"/_phpinfo.php"
+				]
+			}
+		}
+	}, {
+		"type": "navbar-item",
+		"id": "2",
+		"attributes": {
+			"label": "APC info",
+			"url": "/_apcinfo.php",
+			"condition": {
+				"function": [
+					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
+					"visible"
+				],
+				"parameter": [
+					"/_apcinfo.php"
+				]
+			}
+		}
+	}, {
+		"type": "navbar-item",
+		"id": "3",
+		"attributes": {
+			"label": "Apache status",
+			"url": "/server-status",
+			"condition": {
+				"function": [
+					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
+					"visible"
+				],
+				"parameter": [
+					"/server-status"
+				]
+			}
+		}
+	}, {
+		"type": "navbar-item",
+		"id": "4",
+		"attributes": {
+			"label": "PHP-FPM status",
+			"url": "/status?full",
+			"condition": {
+				"function": [
+					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
+					"visible"
+				],
+				"parameter": [
+					"/status?full"
+				]
+			}
+		}
+	}]
+}
