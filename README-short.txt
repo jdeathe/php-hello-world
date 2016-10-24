@@ -1,1 +1,1 @@
-PHP "Hello World!" Web App to demonstrate container implementations
+PHP "Hello, world!" Web App to demonstrate container implementations

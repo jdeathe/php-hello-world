@@ -1,11 +1,21 @@
 <?php
 namespace jdeathe\PhpHelloWorld;
 
+use jdeathe\PhpHelloWorld\Http\Request;
 use jdeathe\PhpHelloWorld\Output\Html;
 use jdeathe\PhpHelloWorld\Settings\IniSettings;
+use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
+use jdeathe\PhpHelloWorld\Collections\NavigationBar;
 
+require_once 'Http/Request.php';
 require_once 'Output/Html.php';
 require_once 'Settings/IniSettings.php';
+require_once 'Collections/JsonFileCollection.php';
+require_once 'Collections/NavigationBar.php';
+
+$request = new Request(
+    $_SERVER
+);
 
 $viewSettings = new IniSettings(
     sprintf(
@@ -16,15 +26,20 @@ $viewSettings = new IniSettings(
         )
     )
 );
+
+$navbar = NavigationBar::create(new JsonFileCollection(
+    '../etc/collections/navbar-item.json'
+));
+$navbarItems = $navbar->getAll();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="home">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -40,53 +55,67 @@ $viewSettings = new IniSettings(
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style type="text/css">
-      html, body {background-color: #333; height: 100%; font-family: sans-serif;}
-      body {margin: 0; padding-top: 50px; color: #fff; box-shadow: inset 0 0 100px rgba(0,0,0,.5);}
-      .hello-banner {padding: 40px 15px; text-align: center; background-color: #222; border-radius: 6px;}
-      .hello-banner h1 {font-size: 63px;}
-      .hello-banner p {margin-bottom: 15px; font-size: 21px; font-weight: 200;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
   </head>
   <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></span>
+        </div>
+<?php
+    if (!empty($navbarItems)) {
+?>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+<?php
+        foreach ($navbarItems as $navbarItem) {
+            $activeItem = $navbarItem->url == $_SERVER['REQUEST_URI']
+                ? true
+                : false
+            ;
+?>
+            <li<?php print $activeItem ? ' class="active"' : ''; ?>><a href="<?php Html::printEncoded($navbarItem->url); ?>"><?php Html::printEncoded($navbarItem->label) . print $activeItem ? '<span class="sr-only"> (current)</span>' : ''; ?></a></li>
+<?php
+        }
+?>
+          </ul>
+        </div>
+<?php
+    }
+?>
+      </div>
+    </nav>
     <div class="container">
 <?php
   // Example method to detect SSL/TLS offloaded requests
-  if (array_key_exists('SERVER_PORT', $_SERVER) && $_SERVER['SERVER_PORT'] === '8443' && 
-      array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-      $_SERVER['HTTPS'] = 'on';
+  if ($request->isTlsTerminated()) {
 ?>
-      <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'TLS termination has been carried out on the load balancer.')); ?></div>
+      <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
 <?php
   }
 ?>
-      <div class="hello-banner">
+      <div class="jumbotron">
         <h1><?php Html::printEncoded($viewSettings->get('heading', 'Hello, World!')); ?></h1>
         <p><?php Html::printfEncoded($viewSettings->get('description'), array(PHP_SAPI)); ?></p>
         <p class="lead">
 <?php
-  if (realpath(
-      __DIR__ . "/_phpinfo.php"
-  )) {
+    if ($navbar->get('1')) {
 ?>
-          <a href="/_phpinfo.php" class="btn btn-lg btn-primary">PHP info</a>
+          <a href="<?php Html::printEncoded($navbar->get('1')->url); ?>" class="btn btn-lg btn-primary"><?php Html::printEncoded($navbar->get('1')->label); ?></a>
 <?php
-  }
-  if (extension_loaded('apc') &&
-      realpath(
-        __DIR__ . "/_apc.php"
-      )
-  ) {
+    }
+    if ($navbar->get('2')) {
 ?>
-          <a href="/_apcinfo.php" class="btn btn-lg btn-default">APC info</a>
+          <a href="<?php Html::printEncoded($navbar->get('2')->url); ?>" class="btn btn-lg btn-default"><?php Html::printEncoded($navbar->get('2')->label); ?></a>
 <?php
-  }
-  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
-?>
-          <a href="/server-status" class="btn btn-lg btn-default">Apache status</a>
-<?php
-  }
+    }
 ?>
         </p>
       </div>

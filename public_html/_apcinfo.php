@@ -1,13 +1,23 @@
 <?php
 namespace jdeathe\PhpHelloWorld;
 
+use jdeathe\PhpHelloWorld\Http\Request;
 use jdeathe\PhpHelloWorld\Output\Html;
 use jdeathe\PhpHelloWorld\Output\Info;
 use jdeathe\PhpHelloWorld\Settings\IniSettings;
+use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
+use jdeathe\PhpHelloWorld\Collections\NavigationBar;
 
+require_once 'Http/Request.php';
 require_once 'Output/Html.php';
 require_once 'Output/Info.php';
 require_once 'Settings/IniSettings.php';
+require_once 'Collections/JsonFileCollection.php';
+require_once 'Collections/NavigationBar.php';
+
+$request = new Request(
+    $_SERVER
+);
 
 $viewSettings = new IniSettings(
     sprintf(
@@ -18,6 +28,10 @@ $viewSettings = new IniSettings(
         )
     )
 );
+
+$navbarItems = NavigationBar::create(new JsonFileCollection(
+    '../etc/collections/navbar-item.json'
+))->getAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +40,7 @@ $viewSettings = new IniSettings(
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -42,10 +56,7 @@ $viewSettings = new IniSettings(
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style type="text/css">
-      body {margin: 0; padding-top: 50px;}
-      .embed-flow iframe {position: absolute;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
@@ -57,33 +68,40 @@ $viewSettings = new IniSettings(
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/index.php"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></a>
+          <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></a>
         </div>
+<?php
+    if (!empty($navbarItems)) {
+?>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/_phpinfo.php">PHP info</a></li>
 <?php
-  if (extension_loaded('apc') &&
-      realpath(
-        __DIR__ . "/_apc.php"
-      )
-  ) {
+        foreach ($navbarItems as $navbarItem) {
+            $activeItem = $navbarItem->url == $_SERVER['REQUEST_URI']
+                ? true
+                : false
+            ;
 ?>
-            <li class="active"><a href="#">APC info<span class="sr-only"> (current)</span></a></li>
+            <li<?php print $activeItem ? ' class="active"' : ''; ?>><a href="<?php Html::printEncoded($navbarItem->url); ?>"><?php Html::printEncoded($navbarItem->label) . print $activeItem ? '<span class="sr-only"> (current)</span>' : ''; ?></a></li>
 <?php
-  }
-  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) && $_SERVER['REMOTE_ADDR'] === '127.0.0.1') {
-?>
-            <li><a href="/server-status">Apache status</a></li>
-<?php
-  }
+        }
 ?>
           </ul>
         </div>
+<?php
+    }
+?>
       </div>
     </nav>
     <div class="container-flow">
+<?php
+  // Example method to detect SSL/TLS offloaded requests
+  if ($request->isTlsTerminated()) {
+?>
+      <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
+<?php
+  }
+?>
       <div class="embed-flow">
         <iframe src="/_apc.php" frameborder="0" width="100%" height="100%"></iframe>
       </div>

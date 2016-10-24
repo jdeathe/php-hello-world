@@ -31,7 +31,7 @@ class Info
                 array(
                     '~<font~',
                     '~</font>~',
-                    '~border="0" cellpadding="3"~',
+                    '~<table.*>~',
                     '~<tr class="h"><th>~',
                     '~</th></tr>~',
                     '~</table>~'
@@ -39,8 +39,8 @@ class Info
                 array(
                     '<span',
                     '</span>',
-                    'class="table table-condensed table-hover"',
-                    '<thead><tr><th>',
+                    '<table class="table table-condensed">',
+                    '<thead><tr><th class="col-xs-4">',
                     '</th></tr></thead><tbody>',
                     '</tbody></table>'
                 ),
