@@ -33,7 +33,7 @@ $navbar = NavigationBar::create(new JsonFileCollection(
 $navbarItems = $navbar->getAll();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="home">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -55,13 +55,7 @@ $navbarItems = $navbar->getAll();
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style type="text/css">
-      html, body {background-color: #333; height: 100%; font-family: sans-serif;}
-      body {margin: 0; padding-top: 71px; color: #fff; box-shadow: inset 0 0 100px rgba(0,0,0,.5);}
-      .jumbotron {margin-top: 50px; padding: 40px 15px; text-align: center; background-color: #222; border-radius: 6px;}
-      .jumbotron h1 {font-size: 63px;}
-      .jumbotron p {margin-bottom: 15px; font-size: 21px; font-weight: 200;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">

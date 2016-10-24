@@ -56,10 +56,7 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style type="text/css">
-      body {margin: 0; padding-top: 71px;}
-      td.v {max-width: 300px; overflow-x: auto;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
