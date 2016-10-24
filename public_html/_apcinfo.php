@@ -5,11 +5,15 @@ use jdeathe\PhpHelloWorld\Http\Request;
 use jdeathe\PhpHelloWorld\Output\Html;
 use jdeathe\PhpHelloWorld\Output\Info;
 use jdeathe\PhpHelloWorld\Settings\IniSettings;
+use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
+use jdeathe\PhpHelloWorld\Collections\NavigationBar;
 
 require_once 'Http/Request.php';
 require_once 'Output/Html.php';
 require_once 'Output/Info.php';
 require_once 'Settings/IniSettings.php';
+require_once 'Collections/JsonFileCollection.php';
+require_once 'Collections/NavigationBar.php';
 
 $request = new Request(
     $_SERVER
@@ -24,6 +28,10 @@ $viewSettings = new IniSettings(
         )
     )
 );
+
+$navbarItems = NavigationBar::create(new JsonFileCollection(
+    '../etc/collections/navbar-item.json'
+))->getAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,45 +73,27 @@ $viewSettings = new IniSettings(
           </button>
           <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></a>
         </div>
+<?php
+    if (!empty($navbarItems)) {
+?>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
 <?php
-  if (realpath(
-      __DIR__ . "/_phpinfo.php"
-  )) {
+        foreach ($navbarItems as $navbarItem) {
+            $activeItem = $navbarItem->url == $_SERVER['REQUEST_URI']
+                ? true
+                : false
+            ;
 ?>
-            <li><a href="/_phpinfo.php">PHP info</a></li>
+            <li<?php print $activeItem ? ' class="active"' : ''; ?>><a href="<?php Html::printEncoded($navbarItem->url); ?>"><?php Html::printEncoded($navbarItem->label) . print $activeItem ? '<span class="sr-only"> (current)</span>' : ''; ?></a></li>
 <?php
-  }
-  if (extension_loaded('apc') &&
-      realpath(
-        __DIR__ . "/_apc.php"
-      )
-  ) {
-?>
-            <li class="active"><a href="#">APC info<span class="sr-only"> (current)</span></a></li>
-<?php
-  }
-  if (array_key_exists('SERVER_SOFTWARE', $_SERVER) &&
-      strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === 0 &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) &&
-      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
-  ) {
-?>
-            <li><a href="/server-status">Apache status</a></li>
-<?php
-  }
-  if (PHP_SAPI === 'fpm-fcgi' &&
-      array_key_exists('REMOTE_ADDR', $_SERVER) &&
-      $_SERVER['REMOTE_ADDR'] === '127.0.0.1'
-  ) {
-?>
-            <li><a href="/status?full">PHP-FPM status</a></li>
-<?php
-  }
+        }
 ?>
           </ul>
         </div>
+<?php
+    }
+?>
       </div>
     </nav>
     <div class="container-flow">
