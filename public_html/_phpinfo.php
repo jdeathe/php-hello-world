@@ -40,7 +40,7 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -68,7 +68,7 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></a>
+          <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></a>
         </div>
 <?php
     if (!empty($navbarItems)) {

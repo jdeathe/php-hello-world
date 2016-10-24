@@ -1,6 +1,6 @@
 {
 	"name": "jdeathe/php-hello-world",
-	"description": "PHP Hello World",
+	"description": "PHP \"Hello, world!\"",
 	"type": "project",
 	"license": "MIT",
 	"authors": [

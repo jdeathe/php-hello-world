@@ -39,7 +39,7 @@ $navbarItems = $navbar->getAll();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -67,7 +67,7 @@ $navbarItems = $navbar->getAll();
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></span>
+          <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></span>
         </div>
 <?php
     if (!empty($navbarItems)) {
