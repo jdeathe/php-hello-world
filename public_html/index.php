@@ -33,13 +33,13 @@ $navbar = NavigationBar::create(new JsonFileCollection(
 $navbarItems = $navbar->getAll();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="home">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -55,13 +55,7 @@ $navbarItems = $navbar->getAll();
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style type="text/css">
-      html, body {background-color: #333; height: 100%; font-family: sans-serif;}
-      body {margin: 0; padding-top: 71px; color: #fff; box-shadow: inset 0 0 100px rgba(0,0,0,.5);}
-      .hello-banner {margin-top: 50px; padding: 40px 15px; text-align: center; background-color: #222; border-radius: 6px;}
-      .hello-banner h1 {font-size: 63px;}
-      .hello-banner p {margin-bottom: 15px; font-size: 21px; font-weight: 200;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
@@ -73,7 +67,7 @@ $navbarItems = $navbar->getAll();
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></span>
+          <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></span>
         </div>
 <?php
     if (!empty($navbarItems)) {
@@ -107,7 +101,7 @@ $navbarItems = $navbar->getAll();
 <?php
   }
 ?>
-      <div class="hello-banner">
+      <div class="jumbotron">
         <h1><?php Html::printEncoded($viewSettings->get('heading', 'Hello, World!')); ?></h1>
         <p><?php Html::printfEncoded($viewSettings->get('description'), array(PHP_SAPI)); ?></p>
         <p class="lead">

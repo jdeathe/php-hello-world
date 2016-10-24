@@ -40,7 +40,7 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP Hello World')); ?></title>
+    <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -56,10 +56,7 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style type="text/css">
-      body {margin: 0; padding-top: 71px;}
-      .embed-flow iframe {position: absolute;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
@@ -71,7 +68,7 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></a>
+          <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></a>
         </div>
 <?php
     if (!empty($navbarItems)) {
