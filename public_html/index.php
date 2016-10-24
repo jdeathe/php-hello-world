@@ -73,7 +73,7 @@ $navbarItems = $navbar->getAll();
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></a>
+          <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP Hello World')); ?></span>
         </div>
 <?php
     if (!empty($navbarItems)) {
