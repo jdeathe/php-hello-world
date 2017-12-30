@@ -14,6 +14,11 @@ RUN rpm --rebuilddb \
 		-e '/^$/d' \
 		-e 's~^\[~\n\[~g' \
 		/etc/php.d/15-xdebug.ini \
+	&& sed -i \
+		-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
+		-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
+		-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
+		/etc/php.d/10-opcache.ini \
 	&& rm -rf /var/cache/yum/* \
 	&& yum clean all
 
@@ -28,20 +33,8 @@ COPY public_html \
 COPY src \
 	${PACKAGE_PATH}/src/
 
-RUN sed -i \
-		-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
-		-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
-		-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
-		/etc/php.d/10-opcache.ini \
-	&& chown -R app:app-www ${PACKAGE_PATH} \
+RUN chown -R app:app-www ${PACKAGE_PATH} \
 	&& find ${PACKAGE_PATH} -type d -exec chmod 750 {} + \
 	&& find ${PACKAGE_PATH}/var -type d -exec chmod 770 {} + \
 	&& find ${PACKAGE_PATH} -type f -exec chmod 640 {} + \
 	&& find ${PACKAGE_PATH}/bin -type f -exec chmod 750 {} +
-
-EXPOSE 22 80 443
-
-ENV APACHE_EXTENDED_STATUS_ENABLED=true \
-	APACHE_OPERATING_MODE="development" \
-	SSH_AUTOSTART_SSHD=true \
-	SSH_AUTOSTART_SSHD_BOOTSTRAP=true
