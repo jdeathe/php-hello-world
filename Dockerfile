@@ -28,12 +28,11 @@ COPY public_html \
 COPY src \
 	${PACKAGE_PATH}/src/
 
-RUN sed \
+RUN sed -i \
 		-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
 		-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
 		-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
-		/etc/php.d/10-opcache.ini.default \
-		> /etc/php.d/10-opcache.ini \
+		/etc/php.d/10-opcache.ini \
 	&& chown -R app:app-www ${PACKAGE_PATH} \
 	&& find ${PACKAGE_PATH} -type d -exec chmod 750 {} + \
 	&& find ${PACKAGE_PATH}/var -type d -exec chmod 770 {} + \
