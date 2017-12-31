@@ -33,7 +33,9 @@ COPY public_html \
 COPY src \
 	${PACKAGE_PATH}/src/
 
-RUN chown -R app:app-www ${PACKAGE_PATH} \
+RUN chown -R \
+		${APACHE_SYSTEM_USER}:${APACHE_RUN_GROUP} \
+		${PACKAGE_PATH} \
 	&& find ${PACKAGE_PATH} -type d -exec chmod 750 {} + \
 	&& find ${PACKAGE_PATH}/var -type d -exec chmod 770 {} + \
 	&& find ${PACKAGE_PATH} -type f -exec chmod 640 {} + \
