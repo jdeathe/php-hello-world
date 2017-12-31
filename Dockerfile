@@ -20,7 +20,10 @@ RUN rpm --rebuilddb \
 		-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
 		/etc/php.d/10-opcache.ini \
 	&& rm -rf /var/cache/yum/* \
-	&& yum clean all
+	&& yum clean all \
+	&& rm -rf /opt/app \
+	&& rm -rf ${PACKAGE_PATH} \
+	&& mkdir -p ${PACKAGE_PATH}/var/{log,session,tmp}
 
 COPY bin \
 	${PACKAGE_PATH}/bin/
@@ -28,8 +31,8 @@ COPY etc \
 	${PACKAGE_PATH}/etc/
 COPY etc/php.d/51-php.ini.develop \
 	${PACKAGE_PATH}/etc/php.d/51-php.ini
-COPY public_html \
-	${PACKAGE_PATH}/public_html/
+COPY public \
+	${PACKAGE_PATH}/public/
 COPY src \
 	${PACKAGE_PATH}/src/
 
@@ -40,3 +43,10 @@ RUN chown -R \
 	&& find ${PACKAGE_PATH}/var -type d -exec chmod 770 {} + \
 	&& find ${PACKAGE_PATH} -type f -exec chmod 640 {} + \
 	&& find ${PACKAGE_PATH}/bin -type f -exec chmod 750 {} +
+
+# Source image's default Apache DocumetRoot public directory is public_html.
+# Set to public for this project. Package name and path are based on build
+# arguments - recreate their environment variables too.
+ENV APACHE_CONTENT_ROOT="/var/www/${PACKAGE_NAME}" \
+	APACHE_PUBLIC_DIRECTORY="public" \
+	PACKAGE_PATH="${PACKAGE_PATH}"
