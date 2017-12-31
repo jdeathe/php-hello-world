@@ -19,7 +19,7 @@ A simple web app for demonstration / testing implementation in a container based
 
 Copy `.env.example` to `.env` and change values to suite.
 
-**NOTE:** It is recommended to set your own username and default SSH public key.
+**Note:** It is recommended to set your own username and default SSH public key.
 
 ### Bring Up the Services
 
@@ -29,14 +29,24 @@ Build the `httpd` service and run all required services in the background.
 $ docker-compose up -d
 ```
 
-### Rebuilding the services
+The app will be available on the docker host. i.e http://localhost/ if running Docker on the local host.
+
+### Rebuilding the Services
 
 After making a change the httpd service's image needs to be rebuilt.
 
-If rebuilding the image is undesirable, another option is to mount the local path's into the container. Uncomment the applicable volumes from the [docker-compose.yml](docker-compose.yml) file.
+**Note:** If rebuilding the image is undesirable, another option is to mount the local path's into the container by uncommenting the applicable volumes in the [docker-compose.yml](docker-compose.yml) file.
 
 ```
 $ docker-compose up -d --build
+```
+
+### Bring Down the Services
+
+Tear down the services when not in use.
+
+```
+$ docker-compose down
 ```
 
 ## Xdebug debugging
