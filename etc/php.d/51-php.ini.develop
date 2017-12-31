@@ -1,0 +1,27 @@
+
+[PHP]
+error_reporting = -1
+display_errors = Off
+log_errors = On
+html_errors = On
+
+[Xdebug]
+xdebug.show_exception_trace = On
+xdebug.auto_trace = Off
+xdebug.trace_enable_trigger = On
+xdebug.trace_output_dir = "${APACHE_CONTENT_ROOT:-/var/www/app}/var/tmp"
+xdebug.trace_output_name = trace.%R.%t
+xdebug.trace_format = 0
+xdebug.collect_params = 2
+xdebug.collect_return = On
+xdebug.show_mem_delta = On
+xdebug.idekey = "${DBGP_IDEKEY:-ide-xdebug}"
+xdebug.remote_enable = On
+xdebug.remote_host = localhost
+xdebug.remote_port = 9000
+xdebug.remote_mode = req
+xdebug.remote_connect_back = Off
+xdebug.profiler_enable = Off
+xdebug.profiler_enable_trigger = On
+xdebug.profiler_output_dir = "${APACHE_CONTENT_ROOT:-/var/www/app}/var/tmp"
+xdebug.profiler_output_name = cachegrind.out.%R.%t
