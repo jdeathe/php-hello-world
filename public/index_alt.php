@@ -55,7 +55,7 @@ $navbarItems = $navbar->getAll();
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet" type="text/css" href="/assets/css/main.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.min.css" integrity="sha384-uYIsekNeKWLgyqRUtId25aosqh1d5mATdH364CUK2bfa4sQS/uPGNPRhGska2fzn" crossorigin="anonymous">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
@@ -122,7 +122,7 @@ $navbarItems = $navbar->getAll();
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/assets/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/assets/jquery/1.12.4/jquery.min.js" integrity="sha384-x17HpdH6ViUS+dYlywqlcH8rUiURPXjP6eE72Slqby2gXPa++EnyVAkJ1P3K9w5L" crossorigin="anonymous"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="/assets/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </body>
