@@ -55,7 +55,7 @@ $navbarItems = $navbar->getAll();
       <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
