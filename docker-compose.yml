@@ -23,7 +23,7 @@ services:
     depends_on:
       - "memcached"
     environment:
-      APACHE_ERROR_LOG_LEVEL: "debug"
+      APACHE_ERROR_LOG_LEVEL: "info"
       APACHE_MOD_SSL_ENABLED: "true"
       APACHE_MPM: "event"
       APACHE_OPERATING_MODE: "development"
