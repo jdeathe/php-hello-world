@@ -103,7 +103,7 @@ $navbarItems = $navbar->getAll();
 ?>
       <div class="jumbotron">
         <h1><?php Html::printEncoded($viewSettings->get('heading', 'Hello, World!')); ?></h1>
-        <p><?php Html::printfEncoded($viewSettings->get('description'), array(PHP_SAPI)); ?></p>
+        <p><?php Html::printEncoded($viewSettings->get('description')); ?></p>
         <p class="lead">
 <?php
     if ($navbar->get('1')) {
