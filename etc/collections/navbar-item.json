@@ -1,6 +1,22 @@
 {
 	"data": [{
 		"type": "navbar-item",
+		"id": "5",
+		"attributes": {
+			"label": "Local assets",
+			"url": "/index_alt.php",
+			"condition": {
+				"function": [
+					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
+					"visible"
+				],
+				"parameter": [
+					"/index_alt.php"
+				]
+			}
+		}
+	}, {
+		"type": "navbar-item",
 		"id": "1",
 		"attributes": {
 			"label": "PHP info",

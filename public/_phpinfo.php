@@ -3,12 +3,14 @@ namespace jdeathe\PhpHelloWorld;
 
 use jdeathe\PhpHelloWorld\Http\Request;
 use jdeathe\PhpHelloWorld\Output\Html;
+use jdeathe\PhpHelloWorld\Output\Info;
 use jdeathe\PhpHelloWorld\Settings\IniSettings;
 use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
 use jdeathe\PhpHelloWorld\Collections\NavigationBar;
 
 require_once 'Http/Request.php';
 require_once 'Output/Html.php';
+require_once 'Output/Info.php';
 require_once 'Settings/IniSettings.php';
 require_once 'Collections/JsonFileCollection.php';
 require_once 'Collections/NavigationBar.php';
@@ -27,35 +29,24 @@ $viewSettings = new IniSettings(
     )
 );
 
-$navbar = NavigationBar::create(new JsonFileCollection(
+$navbarItems = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
-));
-$navbarItems = $navbar->getAll();
+))->getAll();
 ?>
 <!DOCTYPE html>
-<html lang="en" class="home">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
     <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
-
-    <!-- Bootstrap -->
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
     <!--[if lt IE 9]>
-      <script src="//oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    <link rel="stylesheet" type="text/css" href="/css/main.min.css">
+    <link rel="stylesheet" href="/assets/css/main.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
@@ -67,7 +58,7 @@ $navbarItems = $navbar->getAll();
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></span>
+          <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></a>
         </div>
 <?php
     if (!empty($navbarItems)) {
@@ -94,36 +85,19 @@ $navbarItems = $navbar->getAll();
     </nav>
     <div class="container">
 <?php
-  // Example method to detect SSL/TLS offloaded requests
-  if ($request->isTlsTerminated()) {
+    if ($request->isTlsTerminated()) {
 ?>
       <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
 <?php
-  }
-?>
-      <div class="jumbotron">
-        <h1><?php Html::printEncoded($viewSettings->get('heading', 'Hello, World!')); ?></h1>
-        <p><?php Html::printfEncoded($viewSettings->get('description'), array(PHP_SAPI)); ?></p>
-        <p class="lead">
-<?php
-    if ($navbar->get('1')) {
-?>
-          <a href="<?php Html::printEncoded($navbar->get('1')->url); ?>" class="btn btn-lg btn-primary"><?php Html::printEncoded($navbar->get('1')->label); ?></a>
-<?php
-    }
-    if ($navbar->get('2')) {
-?>
-          <a href="<?php Html::printEncoded($navbar->get('2')->url); ?>" class="btn btn-lg btn-default"><?php Html::printEncoded($navbar->get('2')->label); ?></a>
-<?php
     }
 ?>
-        </p>
+      <div class="table-responsive">
+<?php
+    Info::php();
+?>
       </div>
     </div>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
   </body>
 </html>

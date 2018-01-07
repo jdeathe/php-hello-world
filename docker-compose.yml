@@ -1,0 +1,66 @@
+version: "3.0"
+networks:
+  # Backend Data / Persistence
+  tier4:
+    driver: "bridge"
+    ipam:
+      config:
+        - subnet: "172.172.4.0/24"
+    internal: true
+volumes:
+  # Persist service's host keys (prevents MITM warnings).
+  config-ssh:
+    driver: "local"
+services:
+  # Apache PHP web server
+  httpd:
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+      args:
+        PACKAGE_NAME: "app"
+        PACKAGE_PATH: "/opt/app"
+    depends_on:
+      - "memcached"
+    environment:
+      APACHE_ERROR_LOG_LEVEL: "info"
+      APACHE_MOD_SSL_ENABLED: "true"
+      APACHE_MPM: "event"
+      APACHE_OPERATING_MODE: "development"
+      APACHE_SERVER_NAME: "php-hello-world.dev.local"
+      # XDebug IDE key.
+      DBGP_IDEKEY: "${DBGP_IDEKEY}"
+      PHP_OPTIONS_SESSION_SAVE_HANDLER: "memcached"
+      PHP_OPTIONS_SESSION_SAVE_PATH: "memcached:11211"
+      SSH_AUTHORIZED_KEYS: "${SSH_AUTHORIZED_KEYS}"
+      SSH_AUTOSTART_SSHD: "true"
+      SSH_AUTOSTART_SSHD_BOOTSTRAP: "true"
+      SSH_SUDO: "ALL=(ALL) NOPASSWD:ALL"
+      SSH_USER: "${SSH_USER}"
+    ports:
+      - "9022:22"
+      - "80:80"
+      - "443:443"
+    restart: "always"
+    sysctls:
+      net.core.somaxconn: "1024"
+      net.ipv4.ip_local_port_range: "1024 65535"
+      net.ipv4.route.flush: "1"
+    volumes:
+      - "config-ssh:/etc/ssh"
+      # Uncomment to mount local working directories into the running container
+      # - "./public:/opt/app/public:cached"
+      # - "./src:/opt/app/src:cached"
+      - "./var/log:/opt/app/var/log:cached"
+  # Memcached session store
+  memcached:
+    image: "jdeathe/centos-ssh-memcached:1.1.1"
+    environment:
+      MEMCACHED_CACHESIZE: "32"
+    networks:
+      tier4:
+        aliases:
+          - "memcached"
+    restart: "always"
+    sysctls:
+      net.core.somaxconn: "1024"
