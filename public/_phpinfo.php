@@ -85,16 +85,15 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
     </nav>
     <div class="container">
 <?php
-  // Example method to detect SSL/TLS offloaded requests
-  if ($request->isTlsTerminated()) {
+    if ($request->isTlsTerminated()) {
 ?>
       <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
 <?php
-  }
+    }
 ?>
       <div class="table-responsive">
 <?php
-  Info::php();
+    Info::php();
 ?>
       </div>
     </div>
