@@ -3,7 +3,7 @@
 		"type": "navbar-item",
 		"id": "5",
 		"attributes": {
-			"label": "Local Assets",
+			"label": "Local assets",
 			"url": "/index_alt.php",
 			"condition": {
 				"function": [
