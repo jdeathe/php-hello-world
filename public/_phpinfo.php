@@ -56,10 +56,7 @@ $navbarItems = NavigationBar::create(new JsonFileCollection(
                     <ul class="navbar-nav mr-auto">
 <?php
         foreach ($navbarItems as $navbarItem) {
-            $activeItem = $navbarItem->url == $_SERVER['REQUEST_URI']
-                ? true
-                : false
-            ;
+            $activeItem = $navbar->isActiveItem($navbarItem);
 ?>
                         <li class="nav-item<?php print $activeItem ? ' active' : ''; ?>"><<?php print $activeItem ? 'span' : 'a'; ?> class="nav-link" href="<?php Html::printEncoded($navbarItem->url); ?>"><?php Html::printEncoded($navbarItem->label) . print $activeItem ? '<span class="sr-only"> (current)</span>' : ''; ?></<?php print $activeItem ? 'span' : 'a'; ?>></li>
 <?php

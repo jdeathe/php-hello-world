@@ -178,4 +178,20 @@ class NavigationBar implements CollectionItemsInterface {
                 return false;
         }
     }
+
+    /**
+     * Determine if the NavigationBar item is active.
+     *
+     * @return boolean
+     */
+    public function isActiveItem($item) {
+        if (
+            is_object($item)
+            && $item->url == $_SERVER['REQUEST_URI']
+        ) {
+            return true;
+        }
+
+        return false;
+    }
 }
