@@ -49,7 +49,7 @@ services:
     volumes:
       - "config-ssh:/etc/ssh"
       # Uncomment to mount local working directories into the running container
-      # - "./public:/opt/app/public"
+      # - "./public:/opt/app/public:cached"
       # - "./src:/opt/app/src:cached"
       - "./var/log:/opt/app/var/log:cached"
   # Memcached session store
