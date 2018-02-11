@@ -88,7 +88,7 @@ $navbarItems = $navbar->getAll();
     }
     if ($navbar->get('2')) {
 ?>
-                    <a href="<?php Html::printEncoded($navbar->get('2')->url); ?>" class="btn btn-lg btn-default"><?php Html::printEncoded($navbar->get('2')->label); ?></a>
+                    <a href="<?php Html::printEncoded($navbar->get('2')->url); ?>" class="btn btn-lg btn-outline-secondary"><?php Html::printEncoded($navbar->get('2')->label); ?></a>
 <?php
     }
 ?>
