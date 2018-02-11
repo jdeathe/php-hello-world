@@ -29,9 +29,10 @@ $viewSettings = new IniSettings(
     )
 );
 
-$navbarItems = NavigationBar::create(new JsonFileCollection(
+$navbar = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
-))->getAll();
+));
+$navbarItems = $navbar->getAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
