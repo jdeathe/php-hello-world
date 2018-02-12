@@ -187,6 +187,7 @@ class NavigationBar implements CollectionItemsInterface {
     public function isActiveItem($item) {
         if (
             is_object($item)
+            && property_exists($item, 'url')
             && $item->url == $_SERVER['REQUEST_URI']
         ) {
             return true;
