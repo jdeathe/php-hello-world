@@ -54,7 +54,7 @@ services:
       - "./var/log:/opt/app/var/log:cached"
   # Memcached session store
   memcached:
-    image: "jdeathe/centos-ssh-memcached:1.1.1"
+    image: "jdeathe/centos-ssh-memcached:1.1.2"
     environment:
       MEMCACHED_CACHESIZE: "32"
     networks:
