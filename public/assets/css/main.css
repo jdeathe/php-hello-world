@@ -8,4 +8,9 @@ html.home .jumbotron p {color: #aaafbd;}
 html.home span.navbar-brand:hover {color: #9d9d9d;}
 td.v {max-width: 300px; overflow-x: auto;}
 .embed-flow iframe {position: absolute;}
+.btn-primary {background-color: #0366d6; border-color: #0366d6;}
+.btn-primary:hover {background-color: rgba(3,102,214,0.75); border-color: rgba(3,102,214,0.1);}
+nav.navbar-dark {background-color: #24292e !important;}
+.navbar-dark {-webkit-background-clip: padding-box; background-clip: padding-box; border-bottom: 1px solid #14191e; border-bottom: 1px solid rgba(0,0,0,.25);}
 .navbar-dark .navbar-brand {color: #d5d8de;}
+
