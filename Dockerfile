@@ -1,7 +1,14 @@
-FROM jdeathe/centos-ssh-apache-php:2.2.2
+FROM jdeathe/centos-ssh-apache-php:2.2.4
 
 ARG PACKAGE_NAME="app"
 ARG PACKAGE_PATH="/opt/${PACKAGE_NAME}"
+
+# Source image's default Apache DocumetRoot public directory is public_html.
+# Set to public for this project. Package name and path are based on build
+# arguments - recreate their environment variables too.
+ENV APACHE_CONTENT_ROOT="/var/www/${PACKAGE_NAME}" \
+	APACHE_PUBLIC_DIRECTORY="public" \
+	PACKAGE_PATH="/opt/${PACKAGE_NAME}"
 
 RUN rpm --rebuilddb \
 	&& yum -y install \
@@ -43,10 +50,3 @@ RUN chown -R \
 	&& find ${PACKAGE_PATH}/var -type d -exec chmod 770 {} + \
 	&& find ${PACKAGE_PATH} -type f -exec chmod 640 {} + \
 	&& find ${PACKAGE_PATH}/bin -type f -exec chmod 750 {} +
-
-# Source image's default Apache DocumetRoot public directory is public_html.
-# Set to public for this project. Package name and path are based on build
-# arguments - recreate their environment variables too.
-ENV APACHE_CONTENT_ROOT="/var/www/${PACKAGE_NAME}" \
-	APACHE_PUBLIC_DIRECTORY="public" \
-	PACKAGE_PATH="${PACKAGE_PATH}"
