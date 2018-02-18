@@ -133,8 +133,9 @@ class NavigationBar implements CollectionItemsInterface {
     private static function visible($url) {
         switch ($url) {
             case '/_phpinfo.php':
+            case '/index_alt.php':
                 if (realpath(
-                        $_SERVER['DOCUMENT_ROOT'] . '/_phpinfo.php'
+                        $_SERVER['DOCUMENT_ROOT'] . $url
                 )) {
                     return true;
                 } else {
@@ -176,5 +177,22 @@ class NavigationBar implements CollectionItemsInterface {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine if the NavigationBar item is active.
+     *
+     * @return boolean
+     */
+    public function isActiveItem($item) {
+        if (
+            is_object($item)
+            && property_exists($item, 'url')
+            && $item->url == $_SERVER['REQUEST_URI']
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
