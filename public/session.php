@@ -21,7 +21,9 @@ $request = new Request(
 
 $dateTimeUtc = new \DateTime(
     null,
-    new \DateTimeZone('UTC')
+    new \DateTimeZone(
+        'UTC'
+    )
 );
 
 $session = new Session();
