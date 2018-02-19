@@ -33,6 +33,22 @@
 		}
 	}, {
 		"type": "navbar-item",
+		"id": "6",
+		"attributes": {
+			"label": "Session info",
+			"url": "/session.php",
+			"condition": {
+				"function": [
+					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
+					"visible"
+				],
+				"parameter": [
+					"/session.php"
+				]
+			}
+		}
+	}, {
+		"type": "navbar-item",
 		"id": "2",
 		"attributes": {
 			"label": "APC info",

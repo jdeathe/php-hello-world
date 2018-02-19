@@ -1,6 +1,11 @@
 version: "3.0"
 networks:
-  # Backend Data / Persistence
+  tier1:
+    driver: "bridge"
+    ipam:
+      config:
+        - subnet: "172.172.1.0/24"
+    internal: false
   tier4:
     driver: "bridge"
     ipam:
@@ -37,6 +42,9 @@ services:
       SSH_AUTOSTART_SSHD_BOOTSTRAP: "true"
       SSH_SUDO: "ALL=(ALL) NOPASSWD:ALL"
       SSH_USER: "${SSH_USER}"
+    networks:
+      - "tier1"
+      - "tier4"
     ports:
       - "9022:22"
       - "80:80"

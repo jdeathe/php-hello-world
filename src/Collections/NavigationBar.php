@@ -134,6 +134,7 @@ class NavigationBar implements CollectionItemsInterface {
         switch ($url) {
             case '/_phpinfo.php':
             case '/index_alt.php':
+            case '/session.php':
                 if (realpath(
                         $_SERVER['DOCUMENT_ROOT'] . $url
                 )) {
