@@ -15,7 +15,7 @@ class Session
      *
      * @var array
      */
-    protected $session;
+    protected $session = null;
 
     /**
      * Create a new HTTP session
@@ -24,10 +24,11 @@ class Session
      */
     public function __construct(array $session = null)
     {
-        $this->session = isset($session)
-            ? $session
-            : null
-        ;
+        if (
+            isset($session)
+        ) {
+            $this->session =& $session;
+        }
     }
 
     public function destroy()
@@ -211,7 +212,11 @@ class Session
         if (
             session_start()
         ) {
-            $this->session =& $_SESSION;
+            if (
+                $this->session === null
+            ) {
+                $this->session =& $_SESSION;
+            }
 
             return true;
         }
