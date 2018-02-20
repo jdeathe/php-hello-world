@@ -26,7 +26,8 @@ services:
         PACKAGE_NAME: "app"
         PACKAGE_PATH: "/opt/app"
     depends_on:
-      - "memcached"
+      - "memcached_1"
+      - "memcached_2"
     environment:
       APACHE_ERROR_LOG_LEVEL: "info"
       APACHE_MOD_SSL_ENABLED: "true"
@@ -36,7 +37,7 @@ services:
       # XDebug IDE key.
       DBGP_IDEKEY: "${DBGP_IDEKEY}"
       PHP_OPTIONS_SESSION_SAVE_HANDLER: "memcached"
-      PHP_OPTIONS_SESSION_SAVE_PATH: "memcached:11211"
+      PHP_OPTIONS_SESSION_SAVE_PATH: "memcached_1:11211:50,memcached_2:11211:50"
       SSH_AUTHORIZED_KEYS: "${SSH_AUTHORIZED_KEYS}"
       SSH_AUTOSTART_SSHD: "true"
       SSH_AUTOSTART_SSHD_BOOTSTRAP: "true"
@@ -61,14 +62,25 @@ services:
       # - "./src:/opt/app/src:cached"
       - "./var/log:/opt/app/var/log:cached"
   # Memcached session store
-  memcached:
+  memcached_1:
     image: "jdeathe/centos-ssh-memcached:1.1.2"
     environment:
       MEMCACHED_CACHESIZE: "32"
     networks:
       tier4:
         aliases:
-          - "memcached"
+          - "memcached_1"
+    restart: "always"
+    sysctls:
+      net.core.somaxconn: "1024"
+  memcached_2:
+    image: "jdeathe/centos-ssh-memcached:1.1.2"
+    environment:
+      MEMCACHED_CACHESIZE: "32"
+    networks:
+      tier4:
+        aliases:
+          - "memcached_2"
     restart: "always"
     sysctls:
       net.core.somaxconn: "1024"

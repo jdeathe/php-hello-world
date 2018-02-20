@@ -26,15 +26,45 @@ $dateTimeUtc = new \DateTime(
     )
 );
 
+if (
+    ini_get(
+        'session.save_handler'
+    ) == 'memcached'
+) {
+
+    // Libmemcached replicas only work if binary mode is enabled.
+    ini_set(
+        'memcached.sess_binary',
+        'On'
+    );
+
+    ini_set(
+        'memcached.sess_connect_timeout',
+        '60'
+    );
+
+    ini_set(
+        'memcached.sess_consistent_hash',
+        'On'
+    );
+
+    ini_set(
+        'memcached.sess_number_of_replicas',
+        (string) substr_count(
+            ini_get('session.save_path'),
+            ','
+        )
+    );
+
+    ini_set(
+        'memcached.sess_remove_failed',
+        '1'
+    );
+}
+
 $session = new Session();
 $session->setName(
     'php-hello-world'
-)
-->set(
-    'datetime',
-    $dateTimeUtc->format(
-        \DateTime::ATOM
-    )
 )
 ->set(
     'visitCount',
@@ -42,6 +72,12 @@ $session->setName(
         (int) $session->get(
             'visitCount'
         ) + 1
+    )
+)
+->set(
+    'visitDateTime',
+    $dateTimeUtc->format(
+        \DateTime::ATOM
     )
 )
 ->close();
@@ -110,16 +146,24 @@ $navbarItems = $navbar->getAll();
                 <table class="table">
                     <tbody>
                         <tr>
+                            <th>Save handler</th>
+                            <td><?php Html::printEncoded(ini_get('session.save_handler')); ?></td>
+                        </tr>
+                        <tr>
+                            <th>Save path</th>
+                            <td><?php Html::printEncoded(ini_get('session.save_path')); ?></td>
+                        </tr>
+                        <tr>
                             <th>Name</th>
                             <td><?php Html::printEncoded($session->getName()); ?></td>
                         </tr>
                         <tr>
-                            <th>DateTime (UTC)</th>
-                            <td><?php Html::printEncoded($session->get('datetime')); ?></td>
+                            <th>Visit count</th>
+                            <td><?php Html::printEncoded($session->get('visitCount')); ?></td>
                         </tr>
                         <tr>
-                            <th>Visits</th>
-                            <td><?php Html::printEncoded($session->get('visitCount')); ?></td>
+                            <th>Visit time (UTC)</th>
+                            <td><?php Html::printEncoded($session->get('visitDateTime')); ?></td>
                         </tr>
                         <tr>
                             <th>Cookie</th>

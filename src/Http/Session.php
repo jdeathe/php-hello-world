@@ -1,6 +1,9 @@
 <?php
 namespace jdeathe\PhpHelloWorld\Http;
 
+/**
+ * PHP session helper
+ */
 class Session
 {
     /**
@@ -18,6 +21,13 @@ class Session
     protected $session = null;
 
     /**
+     * Session write access.
+     *
+     * @var boolean
+     */
+    protected $write = false;
+
+    /**
      * Create a new HTTP session
      *
      * @param array $session The session environment variables
@@ -31,9 +41,36 @@ class Session
         }
     }
 
+    /**
+     * Write session data and end session
+     *
+     * Can help free up write lock if enabled for the session store
+     *
+     * @return boolean
+     */
+    public function close()
+    {
+        if (
+            session_write_close()
+        ) {
+            $this->write = false;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Destroys all data registered to a session
+     *
+     * @return boolean
+     */
     public function destroy()
     {
-        if (ini_get('session.use_cookies')) {
+        if (
+            ini_get('session.use_cookies')
+        ) {
             $params = session_get_cookie_params();
             setcookie(
                 session_name(),
@@ -46,18 +83,33 @@ class Session
             );
         }
 
-        session_destroy();
+        return session_destroy();
     }
 
+    /**
+     * Check if the session has been initialised
+     *
+     * @return boolean
+     */
     public function isStarted()
     {
-        if ($this->session === null) {
+        if (
+            $this->session === null
+        ) {
             return false;
         }
 
         return true;
     }
 
+    /**
+     * Get a session variable by name
+     *
+     * Does not check if the session variable exists; use has
+     *
+     * @param string $key The session variable key name
+     * @return mixed The session variable value if it exits.
+     */
     public function get($key = null)
     {
         try {
@@ -89,15 +141,27 @@ class Session
         }
     }
 
+    /**
+     * Get and/or set the current session name
+     *
+     * @return string The session name
+     */
     public function getName()
     {
-        if ($this->name === null) {
+        if (
+            $this->name === null
+        ) {
             return session_name();
         }
 
         return $this->name;
     }
 
+    /**
+     * Get a session variable by name
+     *
+     * @param string $key The session variable key name
+     */
     public function has($key = null)
     {
         try {
@@ -129,6 +193,47 @@ class Session
         }
     }
 
+    /**
+     * Re-open a closed session for writing
+     *
+     * @return boolean
+     */
+    public function open()
+    {
+        $this->setName(
+            $this->getName()
+        );
+
+        if (
+            $this->write === true
+        ) {
+            return true;
+        }
+
+        if (
+            session_start()
+        ) {
+            if (
+                $this->session === null
+            ) {
+                $this->session =& $_SESSION;
+            }
+
+            $this->write = true;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Set a session variable by name
+     *
+     * @param string $key The session variable key name
+     * @param string $value The session variable value
+     * @return Session|\InvalidArgumentException
+     */
     public function set($key = null, $value = null)
     {
         try {
@@ -150,6 +255,12 @@ class Session
                 $this->start();
             }
 
+            if (
+                $this->write !== true
+            ) {
+                $this->open();
+            }
+
             $this->session[$key] = $value;
         }
         catch (InvalidArgumentException $e) {
@@ -160,6 +271,14 @@ class Session
         return $this;
     }
 
+    /**
+     * Set the session name
+     *
+     * This should be called before the start method.
+     *
+     * @param string $name The session name
+     * @return Session|\InvalidArgumentException
+     */
     public function setName($name = '')
     {
         try {
@@ -171,14 +290,14 @@ class Session
                 throw new \InvalidArgumentException('Invalid session name.');
             }
 
-            if ( ! $this->isStarted()) {
+            if (
+                ! $this->isStarted()
+            ) {
                 $this->name = trim($name);
-            }
-            else {
-                $this->name = session_name();
-            }
 
-            session_name($this->name);
+                // Set the session name
+                session_name($this->name);
+            }
         }
         catch (InvalidArgumentException $e) {
             echo $e->getMessage();
@@ -188,26 +307,22 @@ class Session
         return $this;
     }
 
-    public function close()
-    {
-        if (
-            ! $this->isStarted()
-        ) {
-            $this->start();
-        }
-
-        return session_write_close();
-    }
-
+    /**
+     * Start session
+     *
+     * @return boolean
+     */
     public function start()
     {
-        if ($this->isStarted()) {
-            return true;
-        }
-
         $this->setName(
             $this->getName()
         );
+
+        if (
+            $this->isStarted()
+        ) {
+            return true;
+        }
 
         if (
             session_start()
@@ -217,6 +332,8 @@ class Session
             ) {
                 $this->session =& $_SESSION;
             }
+
+            $this->write = true;
 
             return true;
         }
