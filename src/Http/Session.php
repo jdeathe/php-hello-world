@@ -230,20 +230,17 @@ class Session
     /**
      * Set a session variable by name
      *
-     * @param string $key The session variable key name
+     * @param string $key The session variable key name. Must not contain numeric, | or ! characters.
      * @param string $value The session variable value
      * @return Session|\InvalidArgumentException
      */
     public function set($key = null, $value = null)
     {
         try {
-            // Ref: http://php.net/manual/en/session.configuration.php#ini.session.serialize-handler
-            // Numeric and special characters are not supported in keys if using
-            // the default session.serialize_handler. PHP >= 5.5.4 introduceds
-            // the option of using php_serialize.
             if (
-                ! is_string($key) &&
-                strpos($key, '|') !== false &&
+                is_numeric($key) ||
+                ! is_string($key) ||
+                strpos($key, '|') !== false ||
                 strpos($key, '!') !== false
             ) {
                 throw new \InvalidArgumentException('Invalid session variable name.');
