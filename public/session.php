@@ -31,31 +31,27 @@ if (
         'session.save_handler'
     ) == 'memcached'
 ) {
-
-    // Libmemcached replicas only work if binary mode is enabled.
     ini_set(
         'memcached.sess_binary',
         'On'
     );
-
     ini_set(
         'memcached.sess_connect_timeout',
         '60'
     );
-
     ini_set(
         'memcached.sess_consistent_hash',
         'On'
     );
-
     ini_set(
         'memcached.sess_number_of_replicas',
         (string) substr_count(
-            ini_get('session.save_path'),
+            ini_get(
+                'session.save_path'
+            ),
             ','
         )
     );
-
     ini_set(
         'memcached.sess_remove_failed',
         '1'
@@ -68,11 +64,9 @@ $session->setName(
 )
 ->set(
     'visitCount',
-    (
-        (int) $session->get(
-            'visitCount'
-        ) + 1
-    )
+    (int) $session->get(
+        'visitCount'
+    ) + 1
 )
 ->set(
     'visitDateTime',
