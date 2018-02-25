@@ -14,6 +14,13 @@ class Session
     protected $name = null;
 
     /**
+     * The session id.
+     *
+     * @var string
+     */
+    protected $id = null;
+
+    /**
      * The session attributes.
      *
      * @var array
@@ -142,6 +149,22 @@ class Session
     }
 
     /**
+     * Get and/or set the current session id
+     *
+     * @return string The session name
+     */
+    public function getId()
+    {
+        if (
+            $this->id === null
+        ) {
+            $this->id = session_id();
+        }
+
+        return $this->id;
+    }
+
+    /**
      * Get and/or set the current session name
      *
      * @return string The session name
@@ -151,7 +174,7 @@ class Session
         if (
             $this->name === null
         ) {
-            return session_name();
+            $this->name = session_name();
         }
 
         return $this->name;
@@ -269,6 +292,45 @@ class Session
     }
 
     /**
+     * Set the session id
+     *
+     * This should be called before the start method.
+     *
+     * @param string $id The session id
+     * @return Session|\InvalidArgumentException
+     */
+    public function setId($id = '')
+    {
+        try {
+            if (
+                ! is_string($id) ||
+                trim($id) === '' ||
+                ! preg_match(
+                    '/^[a-zA-Z0-9,-]+$/',
+                    trim($id)
+                )
+            ) {
+                throw new \InvalidArgumentException('Invalid session id.');
+            }
+
+            if (
+                ! $this->isStarted()
+            ) {
+                $this->id = trim($id);
+
+                // Set the session id
+                session_id($this->id);
+            }
+        }
+        catch (InvalidArgumentException $e) {
+            echo $e->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
      * Set the session name
      *
      * This should be called before the start method.
@@ -282,7 +344,7 @@ class Session
             if (
                 ! is_string($name) ||
                 trim($name) === '' ||
-                preg_match('/^[0-9]+$/', trim($name))
+                is_numeric(trim($name))
             ) {
                 throw new \InvalidArgumentException('Invalid session name.');
             }

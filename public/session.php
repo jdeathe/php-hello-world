@@ -148,6 +148,10 @@ $navbarItems = $navbar->getAll();
                             <td><?php Html::printEncoded(ini_get('session.save_path')); ?></td>
                         </tr>
                         <tr>
+                            <th>ID</th>
+                            <td><?php Html::printEncoded($session->getId()); ?></td>
+                        </tr>
+                        <tr>
                             <th>Name</th>
                             <td><?php Html::printEncoded($session->getName()); ?></td>
                         </tr>
