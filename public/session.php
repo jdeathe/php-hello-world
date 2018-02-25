@@ -29,15 +29,19 @@ $dateTimeUtc = new \DateTime(
 if (
     ini_get(
         'session.save_handler'
-    ) == 'memcached'
+    ) == 'memcached' &&
+    ! empty(
+        substr_count(
+            ini_get(
+                'session.save_path'
+            ),
+            ','
+        )
+    )
 ) {
     ini_set(
         'memcached.sess_binary',
         'On'
-    );
-    ini_set(
-        'memcached.sess_connect_timeout',
-        '60'
     );
     ini_set(
         'memcached.sess_consistent_hash',
