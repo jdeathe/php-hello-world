@@ -76,6 +76,26 @@ class Session
     }
 
     /**
+     * Delete a session variable by name
+     *
+     * @param string $key The session variable key name
+     */
+    public function delete($key = null)
+    {
+        if (
+            $this->has(
+                $key
+            )
+        ) {
+            unset(
+                $this->session[$key]
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * Destroys all data registered to a session
      *
      * @return boolean
@@ -149,8 +169,13 @@ class Session
             }
 
             if (
-                is_array($this->session) &&
-                array_key_exists($key, $this->session)
+                is_array(
+                    $this->session
+                ) &&
+                array_key_exists(
+                    $key,
+                    $this->session
+                )
             ) {
                 return $this->session[$key];
             }
@@ -233,8 +258,13 @@ class Session
             }
 
             if (
-                is_array($this->session) &&
-                array_key_exists($key, $this->session)
+                is_array(
+                    $this->session
+                ) &&
+                array_key_exists(
+                    $key,
+                    $this->session
+                )
             ) {
                 return true;
             }
