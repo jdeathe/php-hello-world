@@ -44,7 +44,10 @@ class Session
         $this->id = null;
         $this->name = null;
         $this->session = null;
-        $this->write = false;
+
+        $this->setWrite(
+            false
+        );
 
         if (
             isset($session)
@@ -67,7 +70,9 @@ class Session
         if (
             session_write_close()
         ) {
-            $this->write = false;
+            $this->setWrite(
+                false
+            );
 
             return true;
         }
@@ -237,6 +242,16 @@ class Session
     }
 
     /**
+     * Get the current write status
+     *
+     * @return boolean The session write status
+     */
+    public function getWrite()
+    {
+        return $this->write;
+    }
+
+    /**
      * Get a session variable by name
      *
      * @param string $key The session variable key name
@@ -289,7 +304,7 @@ class Session
         );
 
         if (
-            $this->write === true
+            $this->getWrite() === true
         ) {
             return true;
         }
@@ -301,7 +316,9 @@ class Session
                 $this->getSession()
             );
 
-            $this->write = true;
+            $this->setWrite(
+                true
+            );
 
             return true;
         }
@@ -335,7 +352,7 @@ class Session
             }
 
             if (
-                $this->write !== true
+                $this->getWrite() === false
             ) {
                 $this->open();
             }
@@ -455,6 +472,31 @@ class Session
     }
 
     /**
+     * Set the session write status
+     *
+     * @param boolean $write The session write status
+     * @return Session|\InvalidArgumentException
+     */
+    private function setWrite($write)
+    {
+        try {
+            if (
+                ! is_bool($write)
+            ) {
+                throw new \InvalidArgumentException('Invalid session write - boolean.');
+            }
+
+            $this->write = $write;
+        }
+        catch (InvalidArgumentException $e) {
+            echo $e->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
      * Start session
      *
      * @return boolean
@@ -488,7 +530,9 @@ class Session
                 $this->session =& $_SESSION;
             }
 
-            $this->write = true;
+            $this->setWrite(
+                true
+            );
 
             return true;
         }
