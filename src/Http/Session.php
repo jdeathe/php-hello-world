@@ -7,44 +7,51 @@ namespace jdeathe\PhpHelloWorld\Http;
 class Session
 {
     /**
-     * The session name.
-     *
-     * @var string
-     */
-    protected $name = null;
-
-    /**
      * The session id.
      *
      * @var string
      */
-    protected $id = null;
+    protected $id;
+
+    /**
+     * The session name.
+     *
+     * @var string
+     */
+    protected $name;
 
     /**
      * The session attributes.
      *
      * @var array
      */
-    protected $session = null;
+    protected $session;
 
     /**
      * Session write access.
      *
      * @var boolean
      */
-    protected $write = false;
+    protected $write;
 
     /**
      * Create a new HTTP session
      *
-     * @param array $session The session environment variables
+     * @param array $session The session variables
      */
     public function __construct(array $session = null)
     {
+        $this->id = null;
+        $this->name = null;
+        $this->session = null;
+        $this->write = false;
+
         if (
             isset($session)
         ) {
-            $this->session =& $session;
+            $this->setSession(
+                $session
+            );
         }
     }
 
@@ -106,6 +113,14 @@ class Session
             return false;
         }
 
+        if (
+            $this->id === null ||
+            $this->id === '' ||
+            session_id() === ''
+        ) {
+            return false;
+        }
+
         return true;
     }
 
@@ -149,7 +164,7 @@ class Session
     }
 
     /**
-     * Get and/or set the current session id
+     * Get the current session id
      *
      * @return string The session name
      */
@@ -165,7 +180,7 @@ class Session
     }
 
     /**
-     * Get and/or set the current session name
+     * Get the current session name
      *
      * @return string The session name
      */
@@ -178,6 +193,22 @@ class Session
         }
 
         return $this->name;
+    }
+
+    /**
+     * Get the session data
+     *
+     * @return array The $_SESSION associative array
+     */
+    public function getSession()
+    {
+        if (
+            $this->session === null
+        ) {
+            $this->session =& $_SESSION;
+        }
+
+        return $this->session;
     }
 
     /**
@@ -236,11 +267,9 @@ class Session
         if (
             session_start()
         ) {
-            if (
-                $this->session === null
-            ) {
-                $this->session =& $_SESSION;
-            }
+            $this->setSession(
+                $this->getSession()
+            );
 
             $this->write = true;
 
@@ -367,6 +396,35 @@ class Session
     }
 
     /**
+     * Set the session data
+     *
+     * @return array The $_SESSION associative array
+     * @return Session|\InvalidArgumentException
+     */
+    public function setSession(array $session = null)
+    {
+        try {
+            if (
+                ! is_array($session)
+            ) {
+                throw new \InvalidArgumentException('Invalid session array.');
+            }
+
+            if (
+                ! $this->isStarted()
+            ) {
+                $this->session =& $session;
+            }
+        }
+        catch (InvalidArgumentException $e) {
+            echo $e->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
      * Start session
      *
      * @return boolean
@@ -386,6 +444,14 @@ class Session
         if (
             session_start()
         ) {
+            if (
+                $this->getId() === ''
+            ) {
+                $this->setId(
+                    session_id()
+                );
+            }
+
             if (
                 $this->session === null
             ) {
