@@ -223,8 +223,10 @@ class Session
 
             return null;
         }
-        catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
             exit;
         }
     }
@@ -336,8 +338,10 @@ class Session
 
             return false;
         }
-        catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
             exit;
         }
     }
@@ -423,8 +427,10 @@ class Session
 
             $this->session[$key] = $value;
         }
-        catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
             exit;
         }
 
@@ -467,8 +473,10 @@ class Session
                 );
             }
         }
-        catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
             exit;
         }
 
@@ -518,8 +526,10 @@ class Session
                 );
             }
         }
-        catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
             exit;
         }
 
@@ -551,8 +561,10 @@ class Session
                 $this->session =& $session;
             }
         }
-        catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
             exit;
         }
 
@@ -580,8 +592,10 @@ class Session
 
             $this->write = $write;
         }
-        catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
             exit;
         }
 
