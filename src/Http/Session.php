@@ -50,7 +50,9 @@ class Session
         );
 
         if (
-            isset($session)
+            isset(
+                $session
+            )
         ) {
             $this->setSession(
                 $session
@@ -108,7 +110,9 @@ class Session
     public function destroy()
     {
         if (
-            ini_get('session.use_cookies')
+            ini_get(
+                'session.use_cookies'
+            )
         ) {
             $params = session_get_cookie_params();
             setcookie(
@@ -118,7 +122,9 @@ class Session
                 $params['path'],
                 $params['domain'],
                 $params['secure'],
-                isset($params['httponly'])
+                isset(
+                    $params['httponly']
+                )
             );
         }
 
@@ -127,7 +133,9 @@ class Session
         );
 
         if (
-            ! empty($session_keys)
+            ! empty(
+                $session_keys
+            )
         ) {
             foreach ($session_keys as $key) {
                 $this->delete(
@@ -175,10 +183,24 @@ class Session
     {
         try {
             if (
-                ! is_string($key) &&
-                ! is_int($key)
+                ! is_string(
+                    $key
+                ) ||
+                ctype_digit(
+                    $key
+                ) ||
+                strpos(
+                    $key,
+                    '|'
+                ) !== false ||
+                strpos(
+                    $key,
+                    '!'
+                ) !== false
             ) {
-                throw new \InvalidArgumentException('Invalid session variable name.');
+                throw new \InvalidArgumentException(
+                    'Invalid session variable name.'
+                );
             }
 
             if (
@@ -274,10 +296,24 @@ class Session
     {
         try {
             if (
-                ! is_string($key) &&
-                ! is_int($key)
+                ! is_string(
+                    $key
+                ) ||
+                ctype_digit(
+                    $key
+                ) ||
+                strpos(
+                    $key,
+                    '|'
+                ) !== false ||
+                strpos(
+                    $key,
+                    '!'
+                ) !== false
             ) {
-                throw new \InvalidArgumentException('Invalid session variable name.');
+                throw new \InvalidArgumentException(
+                    'Invalid session variable name.'
+                );
             }
 
             if (
@@ -343,7 +379,9 @@ class Session
     /**
      * Set a session variable by name
      *
-     * @param string $key The session variable key name. Must not contain numeric, | or ! characters.
+     * The key must not be numeric or contain "|" or "!" characters.
+     *
+     * @param string $key The session variable key name
      * @param string $value The session variable value
      * @return Session|\InvalidArgumentException
      */
@@ -351,12 +389,24 @@ class Session
     {
         try {
             if (
-                is_numeric($key) ||
-                ! is_string($key) ||
-                strpos($key, '|') !== false ||
-                strpos($key, '!') !== false
+                ! is_string(
+                    $key
+                ) ||
+                ctype_digit(
+                    $key
+                ) ||
+                strpos(
+                    $key,
+                    '|'
+                ) !== false ||
+                strpos(
+                    $key,
+                    '!'
+                ) !== false
             ) {
-                throw new \InvalidArgumentException('Invalid session variable name.');
+                throw new \InvalidArgumentException(
+                    'Invalid session variable name.'
+                );
             }
 
             if (
@@ -393,23 +443,28 @@ class Session
     {
         try {
             if (
-                ! is_string($id) ||
-                trim($id) === '' ||
+                ! is_string(
+                    $id
+                ) ||
                 ! preg_match(
-                    '/^[a-zA-Z0-9,-]+$/',
-                    trim($id)
+                    '~^[a-zA-Z0-9,-]+$~',
+                    $id
                 )
             ) {
-                throw new \InvalidArgumentException('Invalid session id.');
+                throw new \InvalidArgumentException(
+                    'Invalid session id.'
+                );
             }
 
             if (
                 ! $this->isStarted()
             ) {
-                $this->id = trim($id);
+                $this->id = $id;
 
                 // Set the session id
-                session_id($this->id);
+                session_id(
+                    $this->id
+                );
             }
         }
         catch (InvalidArgumentException $e) {
@@ -423,6 +478,10 @@ class Session
     /**
      * Set the session name
      *
+     * The session name references the name of the session, which is used in
+     * cookies and URLs. It should contain only alphanumeric characters; it
+     * should be short and descriptive.
+     *
      * This should be called before the start method.
      *
      * @param string $name The session name
@@ -432,20 +491,31 @@ class Session
     {
         try {
             if (
-                ! is_string($name) ||
-                trim($name) === '' ||
-                is_numeric(trim($name))
+                ! is_string(
+                    $name
+                ) ||
+                ctype_digit(
+                    $name
+                ) ||
+                ! preg_match(
+                    '~^[a-zA-Z0-9_-]+$~',
+                    $name
+                )
             ) {
-                throw new \InvalidArgumentException('Invalid session name.');
+                throw new \InvalidArgumentException(
+                    'Invalid session name.'
+                );
             }
 
             if (
                 ! $this->isStarted()
             ) {
-                $this->name = trim($name);
+                $this->name = $name;
 
                 // Set the session name
-                session_name($this->name);
+                session_name(
+                    $this->name
+                );
             }
         }
         catch (InvalidArgumentException $e) {
@@ -466,9 +536,13 @@ class Session
     {
         try {
             if (
-                ! is_array($session)
+                ! is_array(
+                    $session
+                )
             ) {
-                throw new \InvalidArgumentException('Invalid session array.');
+                throw new \InvalidArgumentException(
+                    'Invalid session array.'
+                );
             }
 
             if (
@@ -495,9 +569,13 @@ class Session
     {
         try {
             if (
-                ! is_bool($write)
+                ! is_bool(
+                    $write
+                )
             ) {
-                throw new \InvalidArgumentException('Invalid session write - boolean.');
+                throw new \InvalidArgumentException(
+                    'Invalid session write.'
+                );
             }
 
             $this->write = $write;
