@@ -122,6 +122,20 @@ class Session
             );
         }
 
+        $session_keys = array_keys(
+            $this->session
+        );
+
+        if (
+            ! empty($session_keys)
+        ) {
+            foreach ($session_keys as $key) {
+                $this->delete(
+                    $key
+                );
+            }
+        }
+
         return session_destroy();
     }
 
