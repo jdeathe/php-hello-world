@@ -7,6 +7,13 @@ namespace jdeathe\PhpHelloWorld\Http;
 class Session
 {
     /**
+     * The session bucket key.
+     *
+     * @var string
+     */
+    protected $bucketKey;
+
+    /**
      * The session id.
      *
      * @var string
@@ -37,10 +44,11 @@ class Session
     /**
      * Create a new HTTP session
      *
-     * @param array $session The session variables
+     * @param array $session The session attributes
      */
     public function __construct(array $session = null)
     {
+        $this->bucketKey = null;
         $this->id = null;
         $this->name = null;
         $this->session = null;
@@ -61,31 +69,9 @@ class Session
     }
 
     /**
-     * Write session data and end session
+     * Delete a session attribute by name
      *
-     * Can help free up write lock if enabled for the session store
-     *
-     * @return boolean
-     */
-    public function close()
-    {
-        if (
-            session_write_close()
-        ) {
-            $this->setWrite(
-                false
-            );
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Delete a session variable by name
-     *
-     * @param string $key The session variable key name
+     * @param string $key The session attribute key name
      */
     public function delete($key = null)
     {
@@ -94,9 +80,18 @@ class Session
                 $key
             )
         ) {
-            unset(
-                $this->session[$key]
-            );
+            if (
+                $this->getBucketKey() === ''
+            ) {
+                unset(
+                    $this->session[$key]
+                );
+            }
+            else {
+                unset(
+                    $this->session[$this->getBucketKey()][$key]
+                );
+            }
         }
 
         return $this;
@@ -148,36 +143,12 @@ class Session
     }
 
     /**
-     * Check if the session has been initialised
+     * Get a session attribute by name
      *
-     * @return boolean
-     */
-    public function isStarted()
-    {
-        if (
-            $this->session === null
-        ) {
-            return false;
-        }
-
-        if (
-            $this->id === null ||
-            $this->id === '' ||
-            session_id() === ''
-        ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Get a session variable by name
+     * Does not check if the session attribute exists; check using has.
      *
-     * Does not check if the session variable exists; use has
-     *
-     * @param string $key The session variable key name
-     * @return mixed The session variable value if it exits.
+     * @param string $key The session attribute key name
+     * @return mixed The session attribute value if it exits.
      */
     public function get($key = null)
     {
@@ -199,7 +170,7 @@ class Session
                 ) !== false
             ) {
                 throw new \InvalidArgumentException(
-                    'Invalid session variable name.'
+                    'Invalid session attribute name.'
                 );
             }
 
@@ -210,18 +181,20 @@ class Session
             }
 
             if (
-                is_array(
-                    $this->session
-                ) &&
-                array_key_exists(
-                    $key,
-                    $this->session
+                ! $this->has(
+                    $key
                 )
             ) {
-                return $this->session[$key];
+                return null;
             }
 
-            return null;
+            if (
+                $this->getBucketKey() !== ''
+            ) {
+                return $this->session[$this->getBucketKey()][$key];
+            }
+
+            return $this->session[$key];
         }
         catch (
             InvalidArgumentException $exception
@@ -248,6 +221,55 @@ class Session
     }
 
     /**
+     * Get a session bucket's data
+     *
+     * Should be called after the setBucketKey method.
+     *
+     * @return array|null The session bucket data if it exits.
+     */
+    public function getBucketData()
+    {
+        if (
+            $this->getBucketKey() === ''
+        ) {
+            return null;
+        }
+
+        if (
+            ! $this->isStarted()
+        ) {
+            $this->start();
+        }
+
+        if (
+            ! array_key_exists(
+                $this->getBucketKey(),
+                $this->session
+            )
+        ) {
+            $this->setBucketData();
+        }
+
+        return $this->session[$this->getBucketKey()];
+    }
+
+    /**
+     * Get the current session bucket's key
+     *
+     * @return string The session bucket's key
+     */
+    public function getBucketKey()
+    {
+        if (
+            $this->bucketKey === null
+        ) {
+            $this->bucketKey = '';
+        }
+
+        return $this->bucketKey;
+    }
+
+    /**
      * Get the current session name
      *
      * @return string The session name
@@ -266,7 +288,9 @@ class Session
     /**
      * Get the session data
      *
-     * @return array The $_SESSION associative array
+     * Defaults to the $_SESSION global if not explicitly set.
+     *
+     * @return array The session data
      */
     public function getSession()
     {
@@ -290,9 +314,9 @@ class Session
     }
 
     /**
-     * Get a session variable by name
+     * Get a session attribute by name
      *
-     * @param string $key The session variable key name
+     * @param string $key The session attribute key name
      */
     public function has($key = null)
     {
@@ -314,7 +338,7 @@ class Session
                 ) !== false
             ) {
                 throw new \InvalidArgumentException(
-                    'Invalid session variable name.'
+                    'Invalid session attribute name.'
                 );
             }
 
@@ -325,12 +349,32 @@ class Session
             }
 
             if (
+                $this->getBucketKey() === '' &&
                 is_array(
                     $this->session
                 ) &&
                 array_key_exists(
                     $key,
                     $this->session
+                )
+            ) {
+                return true;
+            }
+            elseif (
+                $this->getBucketKey() !== '' &&
+                is_array(
+                    $this->session
+                ) &&
+                array_key_exists(
+                    $this->getBucketKey(),
+                    $this->session
+                ) &&
+                is_array(
+                    $this->session[$this->getBucketKey()]
+                ) &&
+                array_key_exists(
+                    $key,
+                    $this->session[$this->getBucketKey()]
                 )
             ) {
                 return true;
@@ -347,33 +391,53 @@ class Session
     }
 
     /**
-     * Re-open a closed session for writing
+     * Check if the session has been initialised
      *
      * @return boolean
      */
-    public function open()
+    public function isStarted()
     {
-        $this->setName(
-            $this->getName()
-        );
-
         if (
-            $this->getWrite() === true
+            $this->session === null
         ) {
-            return true;
+            return false;
         }
 
         if (
-            session_start()
+            $this->id === null ||
+            $this->id === '' ||
+            session_id() === ''
         ) {
-            $this->setSession(
-                $this->getSession()
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Write session data and end session
+     *
+     * Can help free up write lock if enabled for the session store
+     *
+     * @return boolean
+     */
+    public function save()
+    {
+        if (
+            ! $this->isStarted()
+        ) {
+            $this->start();
+        }
+
+        $this
+            ->setBucketKey()
+            ->setWrite(
+                false
             );
 
-            $this->setWrite(
-                true
-            );
-
+        if (
+            session_write_close()
+        ) {
             return true;
         }
 
@@ -381,12 +445,12 @@ class Session
     }
 
     /**
-     * Set a session variable by name
+     * Set a session attribute by name
      *
      * The key must not be numeric or contain "|" or "!" characters.
      *
-     * @param string $key The session variable key name
-     * @param string $value The session variable value
+     * @param string $key The session attribute key name
+     * @param string $value The session attribute value
      * @return Session|\InvalidArgumentException
      */
     public function set($key = null, $value = null)
@@ -409,7 +473,7 @@ class Session
                 ) !== false
             ) {
                 throw new \InvalidArgumentException(
-                    'Invalid session variable name.'
+                    'Invalid session attribute name.'
                 );
             }
 
@@ -422,10 +486,108 @@ class Session
             if (
                 $this->getWrite() === false
             ) {
-                $this->open();
+                // Session data is read only.
+                return $this;
             }
 
-            $this->session[$key] = $value;
+            if (
+                $this->getBucketKey() === ''
+            ) {
+                $this->session[$key] = $value;
+            }
+            else {
+                $this->getBucketData();
+                $this->session[$this->getBucketKey()][$key] = $value;
+            }
+        }
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set/initialise the session bucket's data
+     *
+     * Must be called after the setBucketKey method.
+     *
+     * @param array $data The bucket's data
+     * @return Session|\InvalidArgumentException
+     */
+    public function setBucketData(array $data = array())
+    {
+        try {
+            if (
+                ! is_array(
+                    $data
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid bucket data array.'
+                );
+            }
+
+            if (
+                $this->getBucketKey() === ''
+            ) {
+                return $this;
+            }
+
+            if (
+                ! $this->isStarted()
+            ) {
+                $this->start();
+            }
+
+            $this->session[$this->getBucketKey()] = $data;
+        }
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the session bucket's key
+     *
+     * This should be called before the setBucketData method.
+     *
+     * @param string $key The session bucket's key
+     * @return Session|\InvalidArgumentException
+     */
+    public function setBucketKey($key = '')
+    {
+        try {
+            if (
+                ! is_string(
+                    $key
+                ) ||
+                ctype_digit(
+                    $key
+                ) ||
+                strpos(
+                    $key,
+                    '|'
+                ) !== false ||
+                strpos(
+                    $key,
+                    '!'
+                ) !== false
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid session bucket key.'
+                );
+            }
+
+            $this->bucketKey = $key;
         }
         catch (
             InvalidArgumentException $exception
@@ -539,7 +701,7 @@ class Session
     /**
      * Set the session data
      *
-     * @return array The $_SESSION associative array
+     * @param array $session The session data
      * @return Session|\InvalidArgumentException
      */
     public function setSession(array $session = null)
@@ -577,7 +739,7 @@ class Session
      * @param boolean $write The session write status
      * @return Session|\InvalidArgumentException
      */
-    private function setWrite($write)
+    private function setWrite($write = false)
     {
         try {
             if (

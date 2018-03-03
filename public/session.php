@@ -66,19 +66,53 @@ $session = new Session();
 $session->setName(
     'php-hello-world'
 )
+->setBucketKey(
+    'visits'
+)
 ->set(
-    'visitCount',
+    'count',
     (int) $session->get(
-        'visitCount'
+        'count'
     ) + 1
 )
 ->set(
-    'visitDateTime',
+    'last_date',
     $dateTimeUtc->format(
         \DateTime::ATOM
     )
-)
-->close();
+);
+
+if(
+    ! $session
+        ->has(
+            'start_date'
+        )
+) {
+    $session
+        ->set(
+            'start_date',
+            $dateTimeUtc->format(
+                \DateTime::ATOM
+            )
+        );
+}
+
+// Reset bucketKey
+if(
+    ! $session
+        ->setBucketKey()
+        ->has(
+            'session_init_timestamp'
+        )
+) {
+    $session
+        ->set(
+            'session_init_timestamp',
+            $dateTimeUtc->getTimestamp()
+        );
+}
+
+$session->save();
 
 $viewSettings = new IniSettings(
     sprintf(
@@ -160,12 +194,20 @@ $navbarItems = $navbar->getAll();
                             <td><?php Html::printEncoded($session->getName()); ?></td>
                         </tr>
                         <tr>
-                            <th>Visit count</th>
-                            <td><?php Html::printEncoded($session->get('visitCount')); ?></td>
+                            <th>Visit start</th>
+                            <td><?php Html::printEncoded($session->setBucketKey('visits')->get('start_date')); ?></td>
                         </tr>
                         <tr>
-                            <th>Visit time (UTC)</th>
-                            <td><?php Html::printEncoded($session->get('visitDateTime')); ?></td>
+                            <th>Visit time</th>
+                            <td><?php Html::printEncoded($session->setBucketKey('visits')->get('last_date')); ?></td>
+                        </tr>
+                        <tr>
+                            <th>Visit count</th>
+                            <td><?php Html::printEncoded($session->setBucketKey('visits')->get('count')); ?></td>
+                        </tr>
+                        <tr>
+                            <th>Initialisation timestamp</th>
+                            <td><?php Html::printEncoded($session->setBucketKey()->get('session_init_timestamp')); ?></td>
                         </tr>
                         <tr>
                             <th>Cookie</th>
