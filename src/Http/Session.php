@@ -429,11 +429,9 @@ class Session
             $this->start();
         }
 
-        $this
-            ->setBucketKey()
-            ->setWrite(
-                false
-            );
+        $this->setWrite(
+            false
+        );
 
         if (
             session_write_close()

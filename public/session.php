@@ -83,33 +83,29 @@ $session->setName(
 );
 
 if(
-    ! $session
-        ->has(
-            'start_date'
-        )
+    ! $session->has(
+        'start_date'
+    )
 ) {
-    $session
-        ->set(
-            'start_date',
-            $dateTimeUtc->format(
-                \DateTime::ATOM
-            )
-        );
+    $session->set(
+        'start_date',
+        $dateTimeUtc->format(
+            \DateTime::ATOM
+        )
+    );
 }
 
 // Reset bucketKey
 if(
-    ! $session
-        ->setBucketKey()
-        ->has(
-            'session_init_timestamp'
-        )
+    ! $session->setBucketKey()
+    ->has(
+        'init_timestamp'
+    )
 ) {
-    $session
-        ->set(
-            'session_init_timestamp',
-            $dateTimeUtc->getTimestamp()
-        );
+    $session->set(
+        'init_timestamp',
+        $dateTimeUtc->getTimestamp()
+    );
 }
 
 $session->save();
@@ -207,7 +203,7 @@ $navbarItems = $navbar->getAll();
                         </tr>
                         <tr>
                             <th>Initialisation timestamp</th>
-                            <td><?php Html::printEncoded($session->setBucketKey()->get('session_init_timestamp')); ?></td>
+                            <td><?php Html::printEncoded($session->setBucketKey()->get('init_timestamp')); ?></td>
                         </tr>
                         <tr>
                             <th>Cookie</th>
