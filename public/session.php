@@ -205,10 +205,6 @@ $navbarItems = $navbar->getAll();
                             <th>Initialisation timestamp</th>
                             <td><?php Html::printEncoded($session->setBucketKey()->get('init_timestamp')); ?></td>
                         </tr>
-                        <tr>
-                            <th>Cookie</th>
-                            <td><?php array_key_exists($session->getName(), $_COOKIE) ? Html::printEncoded($_COOKIE[$session->getName()]) : null; ?></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
