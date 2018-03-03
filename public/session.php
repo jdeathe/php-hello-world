@@ -190,6 +190,10 @@ $navbarItems = $navbar->getAll();
                             <td><?php Html::printEncoded($session->getName()); ?></td>
                         </tr>
                         <tr>
+                            <th>Initialisation timestamp</th>
+                            <td><?php Html::printEncoded($session->setBucketKey()->get('init_timestamp')); ?></td>
+                        </tr>
+                        <tr>
                             <th>Visit start</th>
                             <td><?php Html::printEncoded($session->setBucketKey('visits')->get('start_date')); ?></td>
                         </tr>
@@ -200,10 +204,6 @@ $navbarItems = $navbar->getAll();
                         <tr>
                             <th>Visit count</th>
                             <td><?php Html::printEncoded($session->setBucketKey('visits')->get('count')); ?></td>
-                        </tr>
-                        <tr>
-                            <th>Initialisation timestamp</th>
-                            <td><?php Html::printEncoded($session->setBucketKey()->get('init_timestamp')); ?></td>
                         </tr>
                     </tbody>
                 </table>
