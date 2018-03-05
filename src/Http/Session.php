@@ -6,6 +6,8 @@ namespace jdeathe\PhpHelloWorld\Http;
  */
 class Session
 {
+    const BUCKET_KEY_DEFAULT = 'data';
+
     /**
      * The session bucket key.
      *
@@ -48,7 +50,7 @@ class Session
      */
     public function __construct(array $session = null)
     {
-        $this->bucketKey = null;
+        $this->bucketKey = self::BUCKET_KEY_DEFAULT;
         $this->id = null;
         $this->name = null;
         $this->session = null;
@@ -267,12 +269,6 @@ class Session
      */
     public function getBucketKey()
     {
-        if (
-            $this->bucketKey === null
-        ) {
-            $this->bucketKey = '';
-        }
-
         return $this->bucketKey;
     }
 
@@ -568,7 +564,7 @@ class Session
      * @param string $key The session bucket's key
      * @return Session|\InvalidArgumentException
      */
-    public function setBucketKey($key = '')
+    public function setBucketKey($key = self::BUCKET_KEY_DEFAULT)
     {
         try {
             if (
