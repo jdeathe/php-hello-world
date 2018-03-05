@@ -401,14 +401,8 @@ class Session
     public function isStarted()
     {
         if (
-            $this->session === null
-        ) {
-            return false;
-        }
-
-        if (
-            $this->id === null ||
-            $this->id === '' ||
+            $this->session === null ||
+            $this->getId() === '' ||
             session_id() === ''
         ) {
             return false;
@@ -791,9 +785,7 @@ class Session
         if (
             $this->getId() === ''
         ) {
-            $this->setId(
-                session_id()
-            );
+            return false;
         }
 
         if (
