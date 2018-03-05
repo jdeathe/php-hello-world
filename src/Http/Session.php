@@ -123,18 +123,25 @@ class Session
             );
         }
 
-        $session_keys = array_keys(
-            $this->session
-        );
+        $keys = null;
+        if (
+            is_array(
+                $this->session
+            )
+        ) {
+            $keys = array_keys(
+                $this->session
+            );
+        }
 
         if (
             ! empty(
-                $session_keys
+                $keys
             )
         ) {
-            foreach ($session_keys as $key) {
-                $this->delete(
-                    $key
+            foreach ($keys as $key) {
+                unset(
+                    $this->session[$key]
                 );
             }
         }
