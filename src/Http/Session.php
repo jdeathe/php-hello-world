@@ -787,29 +787,29 @@ class Session
         }
 
         if (
-            session_start()
+            ! session_start()
         ) {
-            if (
-                $this->getId() === ''
-            ) {
-                $this->setId(
-                    session_id()
-                );
-            }
-
-            if (
-                $this->session === null
-            ) {
-                $this->session =& $_SESSION;
-            }
-
-            $this->setWrite(
-                true
-            );
-
-            return true;
+            return false;
         }
 
-        return false;
+        if (
+            $this->getId() === ''
+        ) {
+            $this->setId(
+                session_id()
+            );
+        }
+
+        if (
+            $this->session === null
+        ) {
+            $this->session =& $_SESSION;
+        }
+
+        $this->setWrite(
+            true
+        );
+
+        return true;
     }
 }
