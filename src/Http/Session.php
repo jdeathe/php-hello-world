@@ -163,20 +163,9 @@ class Session
     {
         try {
             if (
-                ! is_string(
+                ! $this->isValidKey(
                     $key
-                ) ||
-                ctype_digit(
-                    $key
-                ) ||
-                strpos(
-                    $key,
-                    '|'
-                ) !== false ||
-                strpos(
-                    $key,
-                    '!'
-                ) !== false
+                )
             ) {
                 throw new \InvalidArgumentException(
                     'Invalid session attribute name.'
@@ -325,20 +314,9 @@ class Session
     {
         try {
             if (
-                ! is_string(
+                ! $this->isValidKey(
                     $key
-                ) ||
-                ctype_digit(
-                    $key
-                ) ||
-                strpos(
-                    $key,
-                    '|'
-                ) !== false ||
-                strpos(
-                    $key,
-                    '!'
-                ) !== false
+                )
             ) {
                 throw new \InvalidArgumentException(
                     'Invalid session attribute name.'
@@ -412,6 +390,36 @@ class Session
     }
 
     /**
+     * Check if a key is valid for session usage
+     *
+     * @param string $key The key name
+     * @return boolean
+     */
+    private function isValidKey($key = null)
+    {
+        if (
+            ! is_string(
+                $key
+            ) ||
+            ctype_digit(
+                $key
+            ) ||
+            strpos(
+                $key,
+                '|'
+            ) !== false ||
+            strpos(
+                $key,
+                '!'
+            ) !== false
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Write session data and end session
      *
      * Can help free up write lock if enabled for the session store
@@ -452,20 +460,9 @@ class Session
     {
         try {
             if (
-                ! is_string(
+                ! $this->isValidKey(
                     $key
-                ) ||
-                ctype_digit(
-                    $key
-                ) ||
-                strpos(
-                    $key,
-                    '|'
-                ) !== false ||
-                strpos(
-                    $key,
-                    '!'
-                ) !== false
+                )
             ) {
                 throw new \InvalidArgumentException(
                     'Invalid session attribute name.'
@@ -562,20 +559,9 @@ class Session
     {
         try {
             if (
-                ! is_string(
+                ! $this->isValidKey(
                     $key
-                ) ||
-                ctype_digit(
-                    $key
-                ) ||
-                strpos(
-                    $key,
-                    '|'
-                ) !== false ||
-                strpos(
-                    $key,
-                    '!'
-                ) !== false
+                )
             ) {
                 throw new \InvalidArgumentException(
                     'Invalid session bucket key.'
