@@ -319,7 +319,7 @@ class Session
         if (
             $this->session === null
         ) {
-            $this->session =& $_SESSION;
+            $this->session = &$_SESSION;
         }
 
         return $this->session;
@@ -893,7 +893,7 @@ class Session
      * @param array $session The session data
      * @return Session|\InvalidArgumentException
      */
-    public function setSession(array $session = null)
+    public function setSession(array &$session = null)
     {
         try {
             if (
@@ -906,11 +906,7 @@ class Session
                 );
             }
 
-            if (
-                ! $this->isStarted()
-            ) {
-                $this->session =& $session;
-            }
+            $this->session = $session;
         }
         catch (
             InvalidArgumentException $exception
@@ -984,15 +980,14 @@ class Session
             return false;
         }
 
-        if (
-            $this->session === null
-        ) {
-            $this->session =& $_SESSION;
-        }
-
-        $this->setWrite(
-            true
-        );
+        $this
+            ->setSession(
+                $this->getSession()
+            )
+            ->setWrite(
+                true
+            )
+        ;
 
         return true;
     }
