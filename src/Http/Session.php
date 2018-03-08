@@ -512,7 +512,8 @@ class Session
      * Migrate session attributes to a new session id.
      *
      * @param boolean @delete Delete the old session
-     * @param integer @ttl Time, in seconds, before expiring the old session if not deleting
+     * @param integer @ttl Time to live in seconds. Sets an expiry time for the
+     *                     session (if not deleting it) before migrating.
      * @return boolean|\InvalidArgumentException
      */
     public function migrate($delete = false, $ttl = 60)
