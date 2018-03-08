@@ -62,25 +62,66 @@ if (
     );
 }
 
-$session = new Session();
-$session->setName(
-    'php-hello-world'
-)
-->setBucketKey(
-    'visits'
-)
-->set(
-    'count',
-    (int) $session->get(
-        'count'
-    ) + 1
-)
-->set(
-    'last_date',
-    $dateTimeUtc->format(
-        \DateTime::ATOM
+if (
+    version_compare(
+        PHP_VERSION,
+        '5.5.2',
+        '>='
     )
-);
+) {
+    ini_set(
+        'session.use_strict_mode',
+        '1'
+    );
+}
+
+$session = new Session();
+
+if (
+    $session
+        ->setName(
+            'php-hello-world'
+        )
+        ->isExpired()
+) {
+    if (
+        ! $session->invalidate()
+    ){
+        $session->destroy();
+        header(
+            sprintf(
+                '%s %s Session Terminated',
+                $_SERVER["SERVER_PROTOCOL"],
+                403
+            ),
+            true,
+            403
+        );
+        exit;
+    }
+    $session->restart();
+}
+
+$session
+    ->setName(
+        'php-hello-world'
+    )
+    ->setBucketKey(
+        'visits'
+    )
+    ->set(
+        'count',
+        (int) $session->get(
+            'count'
+        ) + 1
+    )
+    ->set(
+        'last_date',
+        $dateTimeUtc->format(
+            \DateTime::ATOM
+        )
+    )
+;
 
 if(
     ! $session->has(
@@ -95,20 +136,41 @@ if(
     );
 }
 
-// Reset bucketKey
-if(
-    ! $session->setBucketKey()
-    ->has(
-        'init_timestamp'
-    )
+// Test session migration
+if (
+    isset(
+        $_GET['migrate']
+    ) &&
+    $_GET['migrate'] == 'true'
 ) {
-    $session->set(
-        'init_timestamp',
-        $dateTimeUtc->getTimestamp()
+    $session->migrate(
+        false,
+        15
     );
 }
 
-$session->save();
+// Switch to an alternative bucket
+$session->setBucketKey(
+    $session::BUCKET_KEY_METADATA
+);
+
+if(
+    ! $session
+        ->has(
+            'init_timestamp'
+        )
+) {
+    $session->set(
+        'init_timestamp',
+        time()
+    );
+}
+
+// Commit session
+$session
+    ->restoreBucketKey()
+    ->save()
+;
 
 $viewSettings = new IniSettings(
     sprintf(
@@ -191,7 +253,7 @@ $navbarItems = $navbar->getAll();
                         </tr>
                         <tr>
                             <th>Initialisation timestamp</th>
-                            <td><?php Html::printEncoded($session->setBucketKey()->get('init_timestamp')); ?></td>
+                            <td><?php Html::printEncoded($session->setBucketKey($session::BUCKET_KEY_METADATA)->get('init_timestamp')); ?></td>
                         </tr>
                         <tr>
                             <th>Visit start</th>

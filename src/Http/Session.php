@@ -7,6 +7,9 @@ namespace jdeathe\PhpHelloWorld\Http;
 class Session
 {
     const BUCKET_KEY_DEFAULT = 'data';
+    const BUCKET_KEY_METADATA = 'metadata';
+    const METADATA_KEY_EXPIRES = 'expires';
+    const METADATA_KEY_ID = 'id';
 
     /**
      * The session bucket key.
@@ -14,6 +17,13 @@ class Session
      * @var string
      */
     protected $bucketKey;
+
+    /**
+     * The session bucket key stack.
+     *
+     * @var array
+     */
+    protected $bucketKeyStack;
 
     /**
      * The session id.
@@ -51,6 +61,7 @@ class Session
     public function __construct(array $session = null)
     {
         $this->bucketKey = self::BUCKET_KEY_DEFAULT;
+        $this->bucketKeyStack = array();
         $this->id = null;
         $this->name = null;
         $this->session = null;
@@ -68,6 +79,44 @@ class Session
                 $session
             );
         }
+    }
+
+    /**
+     * Free all session attributes
+     *
+     * @return boolean
+     */
+    private function clear()
+    {
+        $keys = null;
+        if (
+            is_array(
+                $this->session
+            )
+        ) {
+            $keys = array_keys(
+                $this->session
+            );
+        }
+
+        if (
+            ! empty(
+                $keys
+            )
+        ) {
+            foreach ($keys as $key) {
+                unset(
+                    $this->session[$key]
+                );
+            }
+        }
+
+        return empty(
+                $this->session
+            )
+            ? true
+            : false
+        ;
     }
 
     /**
@@ -125,30 +174,10 @@ class Session
             );
         }
 
-        $keys = null;
-        if (
-            is_array(
-                $this->session
-            )
-        ) {
-            $keys = array_keys(
-                $this->session
-            );
-        }
-
-        if (
-            ! empty(
-                $keys
-            )
-        ) {
-            foreach ($keys as $key) {
-                unset(
-                    $this->session[$key]
-                );
-            }
-        }
-
-        return session_destroy();
+        return
+            $this->clear() &&
+            session_destroy()
+        ;
     }
 
     /**
@@ -157,9 +186,10 @@ class Session
      * Does not check if the session attribute exists; check using has.
      *
      * @param string $key The session attribute key name
+     * @param mixed $default Default value
      * @return mixed The session attribute value if it exits.
      */
-    public function get($key = null)
+    public function get($key = null, $default = null)
     {
         try {
             if (
@@ -183,7 +213,7 @@ class Session
                     $key
                 )
             ) {
-                return null;
+                return $default;
             }
 
             if (
@@ -372,6 +402,63 @@ class Session
     }
 
     /**
+     * Invalidate the current session.
+     *
+     * Delete session data and migrate to a new session id.
+     *
+     * @return boolean
+     */
+    public function invalidate()
+    {
+        return
+            $this->clear() &&
+            $this->migrate(
+                true
+            )
+        ;
+    }
+
+    /**
+     * Check if the session has expired
+     *
+     * Expired session should be invalidated; delete session data and migrate.
+     *
+     * @return boolean
+     */
+    public function isExpired()
+    {
+        $this->setBucketKey(
+            self::BUCKET_KEY_METADATA
+        );
+
+        if (
+            $this->has(
+                self::METADATA_KEY_EXPIRES
+            ) &&
+            $this->has(
+                self::METADATA_KEY_ID
+            )
+        ) {
+            if (
+                $this->getId() == $this->get(
+                    self::METADATA_KEY_ID
+                ) &&
+                time() >= $this->get(
+                    self::METADATA_KEY_EXPIRES
+                )
+            ) {
+                $this->restoreBucketKey();
+
+                return true;
+            }
+        }
+
+        $this->restoreBucketKey();
+
+        return false;
+    }
+
+    /**
      * Check if the session has been initialised
      *
      * @return boolean
@@ -417,6 +504,126 @@ class Session
         }
 
         return true;
+    }
+
+    /**
+     * Migrate the current session.
+     *
+     * Migrate session attributes to a new session id.
+     *
+     * @param boolean @delete Delete the old session
+     * @param integer @ttl Time, in seconds, before expiring the old session if not deleting
+     * @return boolean|\InvalidArgumentException
+     */
+    public function migrate($delete = false, $ttl = 60)
+    {
+        try {
+            if (
+                ! is_bool(
+                    $delete
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid session destroy.'
+                );
+            }
+
+            if (
+                ! is_int(
+                    $ttl
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid session ttl.'
+                );
+            }
+
+            if (
+                ! $this->getWrite() ||
+                ! $this->isStarted()
+            ) {
+                return false;
+            }
+
+            if (
+                $delete === false
+            ) {
+                $this
+                    ->setBucketKey(
+                        self::BUCKET_KEY_METADATA
+                    )
+                    ->set(
+                        self::METADATA_KEY_EXPIRES,
+                        strtotime(
+                            sprintf(
+                                '+%u seconds',
+                                $ttl
+                            )
+                        )
+                    )
+                    ->set(
+                        self::METADATA_KEY_ID,
+                        $this->getId()
+                    )
+                    ->restoreBucketKey()
+                    ->restart()
+                ;
+            }
+
+            if (
+                session_regenerate_id(
+                    $delete
+                )
+            ) {
+                return true;
+            }
+
+            return false;
+        }
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
+            exit;
+        }
+    }
+
+    /**
+     * Commit session data and start back up
+     *
+     * @return Session
+     */
+    public function restart()
+    {
+        $this->save();
+        $this->id = null;
+        $this->start(
+            true
+        );
+
+        return $this;
+    }
+
+    /**
+     * Restore the previous session bucket's key
+     *
+     * Sets the bucketKey by poping the last key off the stack that was added
+     * using the setBucketKey method or the default value.
+     *
+     * @return Session
+     */
+    public function restoreBucketKey()
+    {
+        $this->bucketKey = ! empty(
+                $this->bucketKeyStack
+            )
+            ? array_pop(
+                $this->bucketKeyStack
+            )
+            : self::BUCKET_KEY_DEFAULT
+        ;
+
+        return $this;
     }
 
     /**
@@ -568,6 +775,7 @@ class Session
                 );
             }
 
+            $this->bucketKeyStack[] = $this->bucketKey;
             $this->bucketKey = $key;
         }
         catch (
@@ -748,15 +956,17 @@ class Session
     /**
      * Start session
      *
+     * @param boolean $force Force session start.
      * @return boolean
      */
-    public function start()
+    public function start($force = false)
     {
         $this->setName(
             $this->getName()
         );
 
         if (
+            ! $force &&
             $this->isStarted()
         ) {
             return true;
