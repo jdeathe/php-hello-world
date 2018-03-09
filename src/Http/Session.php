@@ -435,6 +435,9 @@ class Session
             $this->has(
                 self::METADATA_KEY_EXPIRES
             ) &&
+            0 != $this->get(
+                self::METADATA_KEY_EXPIRES
+            ) &&
             $this->has(
                 self::METADATA_KEY_ID
             )
@@ -530,8 +533,8 @@ class Session
             }
 
             if (
-                ! is_int(
-                    $ttl
+                ! ctype_digit(
+                    (string) $ttl
                 )
             ) {
                 throw new \InvalidArgumentException(
@@ -550,23 +553,10 @@ class Session
                 $delete === false
             ) {
                 $this
-                    ->setBucketKey(
-                        self::BUCKET_KEY_METADATA
+                    ->setMetadataExpire(
+                        $ttl,
+                        true
                     )
-                    ->set(
-                        self::METADATA_KEY_EXPIRES,
-                        strtotime(
-                            sprintf(
-                                '+%u seconds',
-                                $ttl
-                            )
-                        )
-                    )
-                    ->set(
-                        self::METADATA_KEY_ID,
-                        $this->getId()
-                    )
-                    ->restoreBucketKey()
                     ->restart()
                 ;
             }
@@ -836,6 +826,93 @@ class Session
     }
 
     /**
+     * Sets the session expiry metadata
+     *
+     * @param integer @ttl Time to live in seconds.
+     * @param boolean @force Overwrite existing value if true.
+     * @return Session|\InvalidArgumentException
+     */
+    private function setMetadataExpire($ttl = 1440, $force = false)
+    {
+        try {
+            if (
+                ! ctype_digit(
+                    (string) $ttl
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid session ttl.'
+                );
+            }
+
+            $this->setBucketKey(
+                self::BUCKET_KEY_METADATA
+            );
+
+            if (
+                $force === true ||
+                ! $this->has(
+                    self::METADATA_KEY_EXPIRES
+                )
+            ) {
+                $this
+                    ->set(
+                        self::METADATA_KEY_EXPIRES,
+                        strtotime(
+                            sprintf(
+                                '+%u seconds',
+                                $ttl
+                            )
+                        )
+                    )
+                    ->set(
+                        self::METADATA_KEY_ID,
+                        $this->getId()
+                    )
+                ;
+            }
+            elseif (
+                $this->has(
+                    self::METADATA_KEY_EXPIRES
+                ) &&
+                $this->has(
+                    self::METADATA_KEY_ID
+                ) &&
+                $this->getId() !== $this->get(
+                    self::METADATA_KEY_ID
+                )
+            ) {
+                // Reset expires on migrated session
+                $this
+                    ->set(
+                        self::METADATA_KEY_EXPIRES,
+                        strtotime(
+                            sprintf(
+                                '+%u seconds',
+                                $ttl
+                            )
+                        )
+                    )
+                    ->set(
+                        self::METADATA_KEY_ID,
+                        $this->getId()
+                    )
+                ;
+            }
+
+            $this->restoreBucketKey();
+        }
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
      * Set the session name
      *
      * The session name references the name of the session, which is used in
@@ -981,12 +1058,16 @@ class Session
             return false;
         }
 
+        $this->getSession();
+
         $this
-            ->setSession(
-                $this->getSession()
-            )
             ->setWrite(
                 true
+            )
+            ->setMetadataExpire(
+                (int) ini_get(
+                    'session.gc_maxlifetime'
+                )
             )
         ;
 
