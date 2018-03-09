@@ -9,6 +9,7 @@ class Session
     const BUCKET_KEY_DEFAULT = 'data';
     const BUCKET_KEY_METADATA = 'metadata';
     const METADATA_KEY_EXPIRES = 'expires';
+    const METADATA_KEY_CREATED = 'created';
     const METADATA_KEY_ID = 'id';
 
     /**
@@ -528,7 +529,7 @@ class Session
                 )
             ) {
                 throw new \InvalidArgumentException(
-                    'Invalid session destroy.'
+                    'Invalid session delete.'
                 );
             }
 
@@ -559,6 +560,11 @@ class Session
                     )
                     ->restart()
                 ;
+            }
+            else {
+                $this->setMetadataCreated(
+                    true
+                );
             }
 
             if (
@@ -826,22 +832,21 @@ class Session
     }
 
     /**
-     * Sets the session expiry metadata
+     * Sets the session created metadata
      *
-     * @param integer @ttl Time to live in seconds.
-     * @param boolean @force Overwrite existing value if true.
+     * @param boolean $overwrite Overwrite existing value if true.
      * @return Session|\InvalidArgumentException
      */
-    private function setMetadataExpire($ttl = 1440, $force = false)
+    private function setMetadataCreated($overwrite = false)
     {
         try {
             if (
-                ! ctype_digit(
-                    (string) $ttl
+                ! is_bool(
+                    $overwrite
                 )
             ) {
                 throw new \InvalidArgumentException(
-                    'Invalid session ttl.'
+                    'Invalid overwrite.'
                 );
             }
 
@@ -850,7 +855,67 @@ class Session
             );
 
             if (
-                $force === true ||
+                $overwrite === true ||
+                ! $this->has(
+                    self::METADATA_KEY_CREATED
+                )
+            ) {
+                $this
+                    ->set(
+                        self::METADATA_KEY_CREATED,
+                        time()
+                    )
+                ;
+            }
+
+            $this->restoreBucketKey();
+        }
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the session expiry metadata
+     *
+     * @param integer $ttl Time to live in seconds.
+     * @param boolean $overwrite Overwrite existing value if true.
+     * @return Session|\InvalidArgumentException
+     */
+    private function setMetadataExpire($ttl = 1440, $overwrite = false)
+    {
+        try {
+            if (
+                ! ctype_digit(
+                    (string) $ttl
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid ttl.'
+                );
+            }
+
+            if (
+                ! is_bool(
+                    $overwrite
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid overwrite.'
+                );
+            }
+
+            $this->setBucketKey(
+                self::BUCKET_KEY_METADATA
+            );
+
+            if (
+                $overwrite === true ||
                 ! $this->has(
                     self::METADATA_KEY_EXPIRES
                 )
@@ -1064,6 +1129,7 @@ class Session
             ->setWrite(
                 true
             )
+            ->setMetadataCreated()
             ->setMetadataExpire(
                 (int) ini_get(
                     'session.gc_maxlifetime'
