@@ -90,7 +90,7 @@ if (
         header(
             sprintf(
                 '%s %s Session Terminated',
-                $_SERVER["SERVER_PROTOCOL"],
+                $request->getServerParams()['SERVER_PROTOCOL'],
                 403
             ),
             true,
