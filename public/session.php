@@ -76,13 +76,12 @@ if (
 }
 
 $session = new Session();
+$session->setName(
+    'php-hello-world'
+);
 
 if (
-    $session
-        ->setName(
-            'php-hello-world'
-        )
-        ->isExpired()
+    $session->isExpired()
 ) {
     if (
         ! $session->invalidate()
@@ -103,9 +102,6 @@ if (
 }
 
 $session
-    ->setName(
-        'php-hello-world'
-    )
     ->setBucketKey(
         'visits'
     )
