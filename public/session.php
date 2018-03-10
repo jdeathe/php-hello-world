@@ -102,7 +102,7 @@ if (
 }
 
 $session
-    ->setBucketKey(
+    ->setBucket(
         'visits'
     )
     ->set(
@@ -147,7 +147,7 @@ if (
 
 // Commit session
 $session
-    ->restoreBucketKey()
+    ->restoreBucket()
     ->save()
 ;
 
@@ -234,7 +234,7 @@ $navbarItems = $navbar->getAll();
                 </table>
             </div>
 <?php
-    if (!empty($session->setBucketKey($session::BUCKET_KEY_METADATA)->getBucketData())) {
+    if (!empty($session->setBucket($session::BUCKET_METADATA)->getBucketData())) {
 ?>
             <h2>Metadata</h2>
             <div class="table-responsive">
@@ -242,18 +242,18 @@ $navbarItems = $navbar->getAll();
                     <tbody>
                         <tr>
                             <th>Created</th>
-                            <td><?php Html::printEncoded($session->setBucketKey($session::BUCKET_KEY_METADATA)->get($session::METADATA_KEY_CREATED)); ?></td>
+                            <td><?php Html::printEncoded($session->setBucket($session::BUCKET_METADATA)->get($session::METADATA_CREATED)); ?></td>
                         </tr>
                         <tr>
                             <th>Expires</th>
-                            <td><?php Html::printEncoded($session->setBucketKey($session::BUCKET_KEY_METADATA)->get($session::METADATA_KEY_EXPIRES)); ?></td>
+                            <td><?php Html::printEncoded($session->setBucket($session::BUCKET_METADATA)->get($session::METADATA_EXPIRES)); ?></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 <?php
     }
-    if (!empty($session->setBucketKey('visits')->getBucketData())) {
+    if (!empty($session->setBucket('visits')->getBucketData())) {
 ?>
             <h2>Visits</h2>
             <div class="table-responsive">
@@ -261,15 +261,15 @@ $navbarItems = $navbar->getAll();
                     <tbody>
                         <tr>
                             <th>Start Date</th>
-                            <td><?php Html::printEncoded($session->setBucketKey('visits')->get('start_date')); ?></td>
+                            <td><?php Html::printEncoded($session->setBucket('visits')->get('start_date')); ?></td>
                         </tr>
                         <tr>
                             <th>Last Date</th>
-                            <td><?php Html::printEncoded($session->setBucketKey('visits')->get('last_date')); ?></td>
+                            <td><?php Html::printEncoded($session->setBucket('visits')->get('last_date')); ?></td>
                         </tr>
                         <tr>
                             <th>Count</th>
-                            <td><?php Html::printEncoded($session->setBucketKey('visits')->get('count')); ?></td>
+                            <td><?php Html::printEncoded($session->setBucket('visits')->get('count')); ?></td>
                         </tr>
                     </tbody>
                 </table>

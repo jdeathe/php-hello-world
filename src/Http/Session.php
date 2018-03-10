@@ -6,25 +6,18 @@ namespace jdeathe\PhpHelloWorld\Http;
  */
 class Session
 {
-    const BUCKET_KEY_DEFAULT = 'data';
-    const BUCKET_KEY_METADATA = 'metadata';
-    const METADATA_KEY_EXPIRES = 'expires';
-    const METADATA_KEY_CREATED = 'created';
-    const METADATA_KEY_ID = 'id';
-
-    /**
-     * The session bucket key.
-     *
-     * @var string
-     */
-    protected $bucketKey;
+    const BUCKET_DEFAULT = 'data';
+    const BUCKET_METADATA = 'metadata';
+    const METADATA_EXPIRES = 'expires';
+    const METADATA_CREATED = 'created';
+    const METADATA_ID = 'id';
 
     /**
      * The session bucket key stack.
      *
      * @var array
      */
-    protected $bucketKeyStack;
+    protected $bucketStack;
 
     /**
      * The session id.
@@ -61,8 +54,7 @@ class Session
      */
     public function __construct(array $session = null)
     {
-        $this->bucketKey = self::BUCKET_KEY_DEFAULT;
-        $this->bucketKeyStack = array();
+        $this->bucketStack = array();
         $this->id = null;
         $this->name = null;
         $this->session = null;
@@ -87,7 +79,7 @@ class Session
      *
      * @return boolean
      */
-    private function clear()
+    public function clear()
     {
         $keys = null;
         if (
@@ -132,18 +124,9 @@ class Session
                 $key
             )
         ) {
-            if (
-                $this->getBucketKey() === ''
-            ) {
-                unset(
-                    $this->session[$key]
-                );
-            }
-            else {
-                unset(
-                    $this->session[$this->getBucketKey()][$key]
-                );
-            }
+            unset(
+                $this->session[$this->getBucket()][$key]
+            );
         }
 
         return $this;
@@ -217,13 +200,7 @@ class Session
                 return $default;
             }
 
-            if (
-                $this->getBucketKey() !== ''
-            ) {
-                return $this->session[$this->getBucketKey()][$key];
-            }
-
-            return $this->session[$key];
+            return $this->getBucketData()[$key];
         }
         catch (
             InvalidArgumentException $exception
@@ -252,18 +229,12 @@ class Session
     /**
      * Get a session bucket's data
      *
-     * Should be called after the setBucketKey method.
+     * Should be called after the setBucket method.
      *
      * @return array|null The session bucket data if it exits.
      */
     public function getBucketData()
     {
-        if (
-            $this->getBucketKey() === ''
-        ) {
-            return null;
-        }
-
         if (
             ! $this->isStarted()
         ) {
@@ -272,14 +243,14 @@ class Session
 
         if (
             ! array_key_exists(
-                $this->getBucketKey(),
-                $this->session
+                $this->getBucket(),
+                $this->getSession()
             )
         ) {
             $this->setBucketData();
         }
 
-        return $this->session[$this->getBucketKey()];
+        return $this->getSession()[$this->getBucket()];
     }
 
     /**
@@ -287,9 +258,16 @@ class Session
      *
      * @return string The session bucket's key
      */
-    public function getBucketKey()
+    public function getBucket()
     {
-        return $this->bucketKey;
+        return ! empty(
+                $this->bucketStack
+            )
+            ? end(
+                $this->bucketStack
+            )
+            : self::BUCKET_DEFAULT
+        ;
     }
 
     /**
@@ -361,32 +339,16 @@ class Session
             }
 
             if (
-                $this->getBucketKey() === '' &&
                 is_array(
-                    $this->session
+                    $this->getSession()
+                ) &&
+                array_key_exists(
+                    $this->getBucket(),
+                    $this->getSession()
                 ) &&
                 array_key_exists(
                     $key,
-                    $this->session
-                )
-            ) {
-                return true;
-            }
-            elseif (
-                $this->getBucketKey() !== '' &&
-                is_array(
-                    $this->session
-                ) &&
-                array_key_exists(
-                    $this->getBucketKey(),
-                    $this->session
-                ) &&
-                is_array(
-                    $this->session[$this->getBucketKey()]
-                ) &&
-                array_key_exists(
-                    $key,
-                    $this->session[$this->getBucketKey()]
+                    $this->getBucketData()
                 )
             ) {
                 return true;
@@ -428,36 +390,36 @@ class Session
      */
     public function isExpired()
     {
-        $this->setBucketKey(
-            self::BUCKET_KEY_METADATA
+        $this->setBucket(
+            self::BUCKET_METADATA
         );
 
         if (
             $this->has(
-                self::METADATA_KEY_EXPIRES
+                self::METADATA_EXPIRES
             ) &&
             0 != $this->get(
-                self::METADATA_KEY_EXPIRES
+                self::METADATA_EXPIRES
             ) &&
             $this->has(
-                self::METADATA_KEY_ID
+                self::METADATA_ID
             )
         ) {
             if (
                 $this->getId() == $this->get(
-                    self::METADATA_KEY_ID
+                    self::METADATA_ID
                 ) &&
                 time() >= $this->get(
-                    self::METADATA_KEY_EXPIRES
+                    self::METADATA_EXPIRES
                 )
             ) {
-                $this->restoreBucketKey();
+                $this->restoreBucket();
 
                 return true;
             }
         }
 
-        $this->restoreBucketKey();
+        $this->restoreBucket();
 
         return false;
     }
@@ -492,6 +454,7 @@ class Session
             ! is_string(
                 $key
             ) ||
+            $key === '' ||
             ctype_digit(
                 $key
             ) ||
@@ -605,19 +568,19 @@ class Session
      * Restore the previous session bucket's key
      *
      * Sets the bucketKey by poping the last key off the stack that was added
-     * using the setBucketKey method or the default value.
+     * using the setBucket method or the default value.
      *
      * @return Session
      */
-    public function restoreBucketKey()
+    public function restoreBucket()
     {
         $this->bucketKey = ! empty(
-                $this->bucketKeyStack
+                $this->bucketStack
             )
             ? array_pop(
-                $this->bucketKeyStack
+                $this->bucketStack
             )
-            : self::BUCKET_KEY_DEFAULT
+            : self::BUCKET_DEFAULT
         ;
 
         return $this;
@@ -686,15 +649,10 @@ class Session
                 return $this;
             }
 
-            if (
-                $this->getBucketKey() === ''
-            ) {
-                $this->session[$key] = $value;
-            }
-            else {
-                $this->getBucketData();
-                $this->session[$this->getBucketKey()][$key] = $value;
-            }
+            // Initialise bucket
+            $this->getBucketData();
+
+            $this->session[$this->getBucket()][$key] = $value;
         }
         catch (
             InvalidArgumentException $exception
@@ -709,7 +667,7 @@ class Session
     /**
      * Set/initialise the session bucket's data
      *
-     * Must be called after the setBucketKey method.
+     * Must be called after the setBucket method.
      *
      * @param array $data The bucket's data
      * @return Session|\InvalidArgumentException
@@ -728,18 +686,12 @@ class Session
             }
 
             if (
-                $this->getBucketKey() === ''
-            ) {
-                return $this;
-            }
-
-            if (
                 ! $this->isStarted()
             ) {
                 $this->start();
             }
 
-            $this->session[$this->getBucketKey()] = $data;
+            $this->session[$this->getBucket()] = $data;
         }
         catch (
             InvalidArgumentException $exception
@@ -759,7 +711,7 @@ class Session
      * @param string $key The session bucket's key
      * @return Session|\InvalidArgumentException
      */
-    public function setBucketKey($key = self::BUCKET_KEY_DEFAULT)
+    public function setBucket($key = self::BUCKET_DEFAULT)
     {
         try {
             if (
@@ -772,8 +724,7 @@ class Session
                 );
             }
 
-            $this->bucketKeyStack[] = $this->bucketKey;
-            $this->bucketKey = $key;
+            $this->bucketStack[] = $key;
         }
         catch (
             InvalidArgumentException $exception
@@ -850,25 +801,25 @@ class Session
                 );
             }
 
-            $this->setBucketKey(
-                self::BUCKET_KEY_METADATA
+            $this->setBucket(
+                self::BUCKET_METADATA
             );
 
             if (
                 $overwrite === true ||
                 ! $this->has(
-                    self::METADATA_KEY_CREATED
+                    self::METADATA_CREATED
                 )
             ) {
                 $this
                     ->set(
-                        self::METADATA_KEY_CREATED,
+                        self::METADATA_CREATED,
                         time()
                     )
                 ;
             }
 
-            $this->restoreBucketKey();
+            $this->restoreBucket();
         }
         catch (
             InvalidArgumentException $exception
@@ -910,19 +861,19 @@ class Session
                 );
             }
 
-            $this->setBucketKey(
-                self::BUCKET_KEY_METADATA
+            $this->setBucket(
+                self::BUCKET_METADATA
             );
 
             if (
                 $overwrite === true ||
                 ! $this->has(
-                    self::METADATA_KEY_EXPIRES
+                    self::METADATA_EXPIRES
                 )
             ) {
                 $this
                     ->set(
-                        self::METADATA_KEY_EXPIRES,
+                        self::METADATA_EXPIRES,
                         strtotime(
                             sprintf(
                                 '+%u seconds',
@@ -931,26 +882,26 @@ class Session
                         )
                     )
                     ->set(
-                        self::METADATA_KEY_ID,
+                        self::METADATA_ID,
                         $this->getId()
                     )
                 ;
             }
             elseif (
                 $this->has(
-                    self::METADATA_KEY_EXPIRES
+                    self::METADATA_EXPIRES
                 ) &&
                 $this->has(
-                    self::METADATA_KEY_ID
+                    self::METADATA_ID
                 ) &&
                 $this->getId() !== $this->get(
-                    self::METADATA_KEY_ID
+                    self::METADATA_ID
                 )
             ) {
                 // Reset expires on migrated session
                 $this
                     ->set(
-                        self::METADATA_KEY_EXPIRES,
+                        self::METADATA_EXPIRES,
                         strtotime(
                             sprintf(
                                 '+%u seconds',
@@ -959,13 +910,13 @@ class Session
                         )
                     )
                     ->set(
-                        self::METADATA_KEY_ID,
+                        self::METADATA_ID,
                         $this->getId()
                     )
                 ;
             }
 
-            $this->restoreBucketKey();
+            $this->restoreBucket();
         }
         catch (
             InvalidArgumentException $exception
@@ -1096,47 +1047,57 @@ class Session
      * Start session
      *
      * @param boolean $force Force session start.
-     * @return boolean
+     * @return boolean|\RuntimeException
      */
     public function start($force = false)
     {
-        $this->setName(
-            $this->getName()
-        );
+        try {
+            $this->setName(
+                $this->getName()
+            );
 
-        if (
-            ! $force &&
-            $this->isStarted()
-        ) {
+            if (
+                ! $force &&
+                $this->isStarted()
+            ) {
+                return true;
+            }
+
+            if (
+                ! session_start()
+            ) {
+                throw new \RuntimeException(
+                    'Session start failed.'
+                );
+            }
+
+            if (
+                $this->getId() === ''
+            ) {
+                return false;
+            }
+
+            $this->getSession();
+
+            $this
+                ->setWrite(
+                    true
+                )
+                ->setMetadataCreated()
+                ->setMetadataExpire(
+                    (int) ini_get(
+                        'session.gc_maxlifetime'
+                    )
+                )
+            ;
+
             return true;
         }
-
-        if (
-            ! session_start()
+        catch (
+            RuntimeException $exception
         ) {
-            return false;
+            echo $exception->getMessage();
+            exit;
         }
-
-        if (
-            $this->getId() === ''
-        ) {
-            return false;
-        }
-
-        $this->getSession();
-
-        $this
-            ->setWrite(
-                true
-            )
-            ->setMetadataCreated()
-            ->setMetadataExpire(
-                (int) ini_get(
-                    'session.gc_maxlifetime'
-                )
-            )
-        ;
-
-        return true;
     }
 }
