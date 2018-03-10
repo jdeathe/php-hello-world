@@ -234,7 +234,7 @@ $navbarItems = $navbar->getAll();
                 </table>
             </div>
 <?php
-    if (!empty($session->setBucket($session::BUCKET_METADATA)->getBucketData())) {
+    if (!$session->setBucket($session::BUCKET_METADATA)->isEmpty()) {
 ?>
             <h2>Metadata</h2>
             <div class="table-responsive">
@@ -253,7 +253,7 @@ $navbarItems = $navbar->getAll();
             </div>
 <?php
     }
-    if (!empty($session->setBucket('visits')->getBucketData())) {
+    if (!$session->setBucket('visits')->isEmpty()) {
 ?>
             <h2>Visits</h2>
             <div class="table-responsive">

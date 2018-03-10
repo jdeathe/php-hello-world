@@ -200,7 +200,7 @@ class Session
                 return $default;
             }
 
-            return $this->getBucketData()[$key];
+            return $this->all()[$key];
         }
         catch (
             InvalidArgumentException $exception
@@ -227,13 +227,11 @@ class Session
     }
 
     /**
-     * Get a session bucket's data
+     * Get all session bucket's data
      *
-     * Should be called after the setBucket method.
-     *
-     * @return array|null The session bucket data if it exits.
+     * @return array The session bucket data.
      */
-    public function getBucketData()
+    public function all()
     {
         if (
             ! $this->isStarted()
@@ -247,7 +245,7 @@ class Session
                 $this->getSession()
             )
         ) {
-            $this->setBucketData();
+            $this->loadBucket();
         }
 
         return $this->getSession()[$this->getBucket()];
@@ -348,7 +346,7 @@ class Session
                 ) &&
                 array_key_exists(
                     $key,
-                    $this->getBucketData()
+                    $this->all()
                 )
             ) {
                 return true;
@@ -379,6 +377,24 @@ class Session
                 true
             )
         ;
+    }
+
+    /**
+     * Check if the session bucket is empty
+     *
+     * @return boolean
+     */
+    public function isEmpty()
+    {
+        if (
+            empty(
+                $this->all()
+            )
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -650,7 +666,7 @@ class Session
             }
 
             // Initialise bucket
-            $this->getBucketData();
+            $this->all();
 
             $this->session[$this->getBucket()][$key] = $value;
         }
@@ -672,7 +688,7 @@ class Session
      * @param array $data The bucket's data
      * @return Session|\InvalidArgumentException
      */
-    public function setBucketData(array $data = array())
+    public function loadBucket(array $data = array())
     {
         try {
             if (
@@ -705,8 +721,6 @@ class Session
 
     /**
      * Set the session bucket's key
-     *
-     * This should be called before the setBucketData method.
      *
      * @param string $key The session bucket's key
      * @return Session|\InvalidArgumentException
