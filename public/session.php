@@ -112,7 +112,7 @@ $session
         ) + 1
     )
     ->set(
-        'last_date',
+        'last',
         $dateTimeUtc->format(
             \DateTime::ATOM
         )
@@ -121,11 +121,11 @@ $session
 
 if(
     ! $session->has(
-        'start_date'
+        'first'
     )
 ) {
     $session->set(
-        'start_date',
+        'first',
         $dateTimeUtc->format(
             \DateTime::ATOM
         )
@@ -234,18 +234,29 @@ $navbarItems = $navbar->getAll();
                 </table>
             </div>
 <?php
+    if (!$session->setBucket($session::BUCKET_METADATA)->isEmpty() || !$session->setBucket('visits')->isEmpty()) {
+?>
+            <h2>Bucket Contents</h2>
+<?php
+    }
     if (!$session->setBucket($session::BUCKET_METADATA)->isEmpty()) {
 ?>
-            <h2>Metadata</h2>
+            <h3><?php Html::printEncoded($session::BUCKET_METADATA); ?></h3>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr>
-                            <th>Created</th>
+                            <td><?php Html::printEncoded($session::METADATA_CREATED); ?></td>
                             <td><?php Html::printEncoded($session->setBucket($session::BUCKET_METADATA)->get($session::METADATA_CREATED)); ?></td>
                         </tr>
                         <tr>
-                            <th>Expires</th>
+                            <td><?php Html::printEncoded($session::METADATA_EXPIRES); ?></td>
                             <td><?php Html::printEncoded($session->setBucket($session::BUCKET_METADATA)->get($session::METADATA_EXPIRES)); ?></td>
                         </tr>
                     </tbody>
@@ -255,20 +266,26 @@ $navbarItems = $navbar->getAll();
     }
     if (!$session->setBucket('visits')->isEmpty()) {
 ?>
-            <h2>Visits</h2>
+            <h3>visits</h3>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr>
-                            <th>Start Date</th>
-                            <td><?php Html::printEncoded($session->setBucket('visits')->get('start_date')); ?></td>
+                            <td>first</td>
+                            <td><?php Html::printEncoded($session->setBucket('visits')->get('first')); ?></td>
                         </tr>
                         <tr>
-                            <th>Last Date</th>
-                            <td><?php Html::printEncoded($session->setBucket('visits')->get('last_date')); ?></td>
+                            <td>last</td>
+                            <td><?php Html::printEncoded($session->setBucket('visits')->get('last')); ?></td>
                         </tr>
                         <tr>
-                            <th>Count</th>
+                            <td>count</td>
                             <td><?php Html::printEncoded($session->setBucket('visits')->get('count')); ?></td>
                         </tr>
                     </tbody>
