@@ -236,6 +236,39 @@ class Session
     }
 
     /**
+     * Get all session buckets
+     *
+     * @return array The session buckets.
+     */
+    public function getAllBuckets()
+    {
+        if (
+            ! $this->isStarted()
+        ) {
+            $this->start();
+        }
+
+        if (
+            empty(
+                $this->getSession()
+            )
+        ) {
+            return array();
+        }
+
+        return array_filter(
+            array_keys(
+                $this->getSession()
+            ),
+            function($key) {
+                return is_array(
+                    $this->getSession()[$key]
+                );
+            }
+        );
+    }
+
+    /**
      * Get the current session id
      *
      * @return string The session name
