@@ -234,14 +234,14 @@ $navbarItems = $navbar->getAll();
                 </table>
             </div>
 <?php
-    if (!$session->setBucket($session::BUCKET_METADATA)->isEmpty() || !$session->setBucket('visits')->isEmpty()) {
+    if (!empty($session->getAllBuckets())) {
 ?>
             <h2>Bucket Contents</h2>
 <?php
-    }
-    if (!$session->setBucket($session::BUCKET_METADATA)->isEmpty()) {
+        foreach ($session->getAllBuckets() as $bucket) {
+            if (!$session->setBucket($bucket)->isEmpty()) {
 ?>
-            <h3><?php Html::printEncoded($session::BUCKET_METADATA); ?></h3>
+            <h3><?php Html::printEncoded($bucket); ?></h3>
             <div class="table-responsive">
                 <table class="table table-sm">
                     <thead>
@@ -251,47 +251,22 @@ $navbarItems = $navbar->getAll();
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><?php Html::printEncoded($session::METADATA_CREATED); ?></td>
-                            <td><?php Html::printEncoded($session->setBucket($session::BUCKET_METADATA)->get($session::METADATA_CREATED)); ?></td>
-                        </tr>
-                        <tr>
-                            <td><?php Html::printEncoded($session::METADATA_EXPIRES); ?></td>
-                            <td><?php Html::printEncoded($session->setBucket($session::BUCKET_METADATA)->get($session::METADATA_EXPIRES)); ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
 <?php
-    }
-    if (!$session->setBucket('visits')->isEmpty()) {
+                foreach ($session->getAll() as $key => $value) {
 ?>
-            <h3>visits</h3>
-            <div class="table-responsive">
-                <table class="table table-sm">
-                    <thead>
                         <tr>
-                            <th>Key</th>
-                            <th>Value</th>
+                            <td><?php Html::printEncoded($key); ?></td>
+                            <td><?php Html::printEncoded($value); ?></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>first</td>
-                            <td><?php Html::printEncoded($session->setBucket('visits')->get('first')); ?></td>
-                        </tr>
-                        <tr>
-                            <td>last</td>
-                            <td><?php Html::printEncoded($session->setBucket('visits')->get('last')); ?></td>
-                        </tr>
-                        <tr>
-                            <td>count</td>
-                            <td><?php Html::printEncoded($session->setBucket('visits')->get('count')); ?></td>
-                        </tr>
+<?php
+                }
+?>
                     </tbody>
                 </table>
             </div>
 <?php
+            }
+        }
     }
 ?>
         </div>
