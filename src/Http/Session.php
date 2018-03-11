@@ -200,7 +200,7 @@ class Session
                 return $default;
             }
 
-            return $this->all()[$key];
+            return $this->getAll()[$key];
         }
         catch (
             InvalidArgumentException $exception
@@ -211,27 +211,11 @@ class Session
     }
 
     /**
-     * Get the current session id
-     *
-     * @return string The session name
-     */
-    public function getId()
-    {
-        if (
-            $this->id === null
-        ) {
-            $this->id = session_id();
-        }
-
-        return $this->id;
-    }
-
-    /**
-     * Get all session bucket's data
+     * Get all data for the session bucket
      *
      * @return array The session bucket data.
      */
-    public function all()
+    public function getAll()
     {
         if (
             ! $this->isStarted()
@@ -249,6 +233,22 @@ class Session
         }
 
         return $this->getSession()[$this->getBucket()];
+    }
+
+    /**
+     * Get the current session id
+     *
+     * @return string The session name
+     */
+    public function getId()
+    {
+        if (
+            $this->id === null
+        ) {
+            $this->id = session_id();
+        }
+
+        return $this->id;
     }
 
     /**
@@ -346,7 +346,7 @@ class Session
                 ) &&
                 array_key_exists(
                     $key,
-                    $this->all()
+                    $this->getAll()
                 )
             ) {
                 return true;
@@ -388,7 +388,7 @@ class Session
     {
         if (
             empty(
-                $this->all()
+                $this->getAll()
             )
         ) {
             return true;
@@ -666,7 +666,7 @@ class Session
             }
 
             // Initialise bucket
-            $this->all();
+            $this->getAll();
 
             $this->session[$this->getBucket()][$key] = $value;
         }
