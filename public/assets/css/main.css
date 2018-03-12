@@ -6,6 +6,7 @@ html.home .jumbotron {background-color: #272b33; border-radius: .3rem; margin-to
 html.home .jumbotron h1 {color: #d5d8de; font-size: 3rem;}
 html.home .jumbotron p {color: #aaafbd;}
 html.home span.navbar-brand:hover {color: #9d9d9d;}
+html.session caption {caption-side: top;}
 td.v {max-width: 300px; overflow-x: auto;}
 .embed-flow iframe {position: absolute;}
 .btn-primary {background-color: #4e7acc; border-color: #4e7acc;}

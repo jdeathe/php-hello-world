@@ -241,9 +241,9 @@ $navbarItems = $navbar->getAll();
         foreach ($session->getAllBuckets() as $bucket) {
             if (!$session->setBucket($bucket)->isEmpty()) {
 ?>
-            <h3><?php Html::printEncoded($bucket); ?></h3>
             <div class="table-responsive">
                 <table class="table table-sm">
+                    <caption><?php Html::printEncoded($bucket); ?></caption>
                     <thead>
                         <tr>
                             <th>Key</th>
