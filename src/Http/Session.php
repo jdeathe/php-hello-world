@@ -75,7 +75,7 @@ class Session
     }
 
     /**
-     * Free all session attributes
+     * Free all session buckets
      *
      * @return boolean
      */
@@ -350,9 +350,6 @@ class Session
             }
 
             if (
-                is_array(
-                    $this->getSession()
-                ) &&
                 array_key_exists(
                     $this->getBucket(),
                     $this->getSession()
