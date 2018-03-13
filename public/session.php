@@ -132,17 +132,26 @@ if(
     );
 }
 
-// Test session migration
+// Test Session methods
 if (
-    isset(
-        $_GET['migrate']
-    ) &&
-    $_GET['migrate'] == 'true'
+    array_key_exists(
+        'action',
+        $_GET
+    )
 ) {
-    $session->migrate(
-        false,
-        15
-    );
+    switch (
+        $_GET['action']
+    ) {
+        case 'clear':
+            $session->clear();
+            break;
+        case 'migrate':
+            $session->migrate(
+                false,
+                15
+            );
+            break;
+    }
 }
 
 // Commit session
