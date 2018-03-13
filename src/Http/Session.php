@@ -81,35 +81,15 @@ class Session
      */
     public function clear()
     {
-        $keys = null;
-        if (
-            is_array(
-                $this->session
-            )
-        ) {
-            $keys = array_keys(
-                $this->session
+        foreach (array_keys($this->getSession()) as $key) {
+            unset(
+                $this->session[$key]
             );
         }
 
-        if (
-            ! empty(
-                $keys
-            )
-        ) {
-            foreach ($keys as $key) {
-                unset(
-                    $this->session[$key]
-                );
-            }
-        }
-
         return empty(
-                $this->session
-            )
-            ? true
-            : false
-        ;
+            $this->session
+        );
     }
 
     /**
