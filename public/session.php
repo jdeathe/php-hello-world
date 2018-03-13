@@ -19,13 +19,6 @@ $request = new Request(
     $_SERVER
 );
 
-$dateTimeUtc = new \DateTime(
-    null,
-    new \DateTimeZone(
-        'UTC'
-    )
-);
-
 if (
     ini_get(
         'session.save_handler'
@@ -101,6 +94,13 @@ if (
     $session->restart();
 }
 
+$dateTime = new \DateTime(
+    null,
+    new \DateTimeZone(
+        'UTC'
+    )
+);
+
 $session
     ->setBucket(
         'visits'
@@ -113,7 +113,7 @@ $session
     )
     ->set(
         'last',
-        $dateTimeUtc->format(
+        $dateTime->format(
             \DateTime::ATOM
         )
     )
@@ -126,7 +126,7 @@ if(
 ) {
     $session->set(
         'first',
-        $dateTimeUtc->format(
+        $dateTime->format(
             \DateTime::ATOM
         )
     );
