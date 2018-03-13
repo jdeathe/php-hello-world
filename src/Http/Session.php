@@ -399,15 +399,9 @@ class Session
      */
     public function isEmpty()
     {
-        if (
-            empty(
-                $this->getAll()
-            )
-        ) {
-            return true;
-        }
-
-        return false;
+        return empty(
+            $this->getAll()
+        );
     }
 
     /**
@@ -559,15 +553,9 @@ class Session
                 );
             }
 
-            if (
-                session_regenerate_id(
-                    $delete
-                )
-            ) {
-                return true;
-            }
-
-            return false;
+            return session_regenerate_id(
+                $delete
+            );
         }
         catch (
             InvalidArgumentException $exception
