@@ -540,7 +540,7 @@ class Session
                 $delete === false
             ) {
                 $this
-                    ->setMetadataExpire(
+                    ->setMetadataExpires(
                         $ttl,
                         true
                     )
@@ -853,7 +853,7 @@ class Session
      * @param boolean $overwrite Overwrite existing value if true.
      * @return Session|\InvalidArgumentException
      */
-    private function setMetadataExpire($ttl = 1440, $overwrite = false)
+    private function setMetadataExpires($ttl = 1440, $overwrite = false)
     {
         try {
             if (
@@ -1099,7 +1099,7 @@ class Session
                     true
                 )
                 ->setMetadataCreated()
-                ->setMetadataExpire(
+                ->setMetadataExpires(
                     (int) ini_get(
                         'session.gc_maxlifetime'
                     )
