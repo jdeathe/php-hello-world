@@ -619,13 +619,7 @@ class Session
             false
         );
 
-        if (
-            session_write_close()
-        ) {
-            return true;
-        }
-
-        return false;
+        return session_write_close();
     }
 
     /**
