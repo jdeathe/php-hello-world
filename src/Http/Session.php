@@ -7,6 +7,7 @@ namespace jdeathe\PhpHelloWorld\Http;
 class Session
 {
     const BUCKET_DEFAULT = 'data';
+    const BUCKET_FLASH = 'flash';
     const BUCKET_METADATA = 'metadata';
     const METADATA_EXPIRES = 'expires';
     const METADATA_CREATED = 'created';
@@ -180,7 +181,19 @@ class Session
                 return $default;
             }
 
-            return $this->getAll()[$key];
+            if (
+                $this->getBucket() !== self::BUCKET_FLASH
+            ) {
+                return $this->getAll()[$key];
+            }
+
+            $value = $this->getAll()[$key];
+
+            $this->delete(
+                $key
+            );
+
+            return $value;
         }
         catch (
             InvalidArgumentException $exception

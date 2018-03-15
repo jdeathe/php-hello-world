@@ -94,6 +94,14 @@ if (
     $session->restart();
 }
 
+$session
+    ->setBucket($session::BUCKET_FLASH)
+    ->set(
+        'info',
+        'Hello! Welcome to Session flash.'
+    )
+;
+
 $dateTime = new \DateTime(
     null,
     new \DateTimeZone(
@@ -216,6 +224,11 @@ $navbarItems = $navbar->getAll();
     if ($request->isTlsTerminated()) {
 ?>
             <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
+<?php
+    }
+    if (!$session->setBucket($session::BUCKET_FLASH)->isEmpty() && $session->setBucket($session::BUCKET_FLASH)->has('info')) {
+?>
+            <div class="alert alert-info"><?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('info')); ?></div>
 <?php
     }
 ?>
