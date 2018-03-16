@@ -131,9 +131,18 @@ class Session
                 $key
             )
         ) {
-            unset(
-                $this->session[$this->getBucket()][$key]
-            );
+            if (
+                self::BUCKET_FLASH === $this->getBucket()
+            ) {
+                unset(
+                    $this->flash[$key]
+                );
+            }
+            else {
+                unset(
+                    $this->session[$this->getBucket()][$key]
+                );
+            }
         }
 
         return $this;
@@ -813,18 +822,14 @@ class Session
                 self::BUCKET_FLASH === $this->getBucket()
             ) {
                 $value = $this->getFlash()[$key];
-
-                unset(
-                    $this->flash[$key]
-                );
             }
             else {
                 $value = $this->getAll()[$key];
-
-                $this->delete(
-                    $key
-                );
             }
+
+            $this->delete(
+                $key
+            );
 
             return $value;
         }
