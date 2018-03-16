@@ -90,6 +90,10 @@ class Session
      */
     public function clear()
     {
+        $this->setFlash(
+            array()
+        );
+
         foreach (array_keys($this->getSession()) as $key) {
             unset(
                 $this->session[$key]
