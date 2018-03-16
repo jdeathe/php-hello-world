@@ -21,6 +21,13 @@ class Session
     protected $bucketStack;
 
     /**
+     * The session flash data.
+     *
+     * @var array
+     */
+    protected $flash;
+
+    /**
      * The session id.
      *
      * @var string
@@ -56,6 +63,7 @@ class Session
     public function __construct(array $session = null)
     {
         $this->bucketStack = array();
+        $this->flash = null;
         $this->id = null;
         $this->name = null;
         $this->session = null;
@@ -91,6 +99,24 @@ class Session
         return empty(
             $this->session
         );
+    }
+
+    /**
+     * Free session bucket
+     *
+     * @return Session
+     */
+    public function clearBucket()
+    {
+        if (
+            ! $this->isStarted()
+        ) {
+            $this->start();
+        }
+
+        $this->session[$this->getBucket()] = array();
+
+        return $this;
     }
 
     /**
@@ -148,8 +174,6 @@ class Session
     /**
      * Get a session attribute by name
      *
-     * Does not check if the session attribute exists; check using has.
-     *
      * @param string $key The session attribute key name
      * @param mixed $default Default value
      * @return mixed The session attribute value if it exits.
@@ -182,18 +206,12 @@ class Session
             }
 
             if (
-                $this->getBucket() !== self::BUCKET_FLASH
+                self::BUCKET_FLASH === $this->getBucket()
             ) {
-                return $this->getAll()[$key];
+                return $this->getFlash()[$key];
             }
 
-            $value = $this->getAll()[$key];
-
-            $this->delete(
-                $key
-            );
-
-            return $value;
+            return $this->getAll()[$key];
         }
         catch (
             InvalidArgumentException $exception
@@ -262,22 +280,6 @@ class Session
     }
 
     /**
-     * Get the current session id
-     *
-     * @return string The session name
-     */
-    public function getId()
-    {
-        if (
-            $this->id === null
-        ) {
-            $this->id = session_id();
-        }
-
-        return $this->id;
-    }
-
-    /**
      * Get the current session bucket's key
      *
      * @return string The session bucket's key
@@ -292,6 +294,38 @@ class Session
             )
             : self::BUCKET_DEFAULT
         ;
+    }
+
+    /**
+     * Get the session flash data
+     *
+     * @return mixed The session flash data
+     */
+    private function getFlash()
+    {
+        if (
+            $this->flash === null
+        ) {
+            $this->flash = array();
+        }
+
+        return $this->flash;
+    }
+
+    /**
+     * Get the current session id
+     *
+     * @return string The session name
+     */
+    public function getId()
+    {
+        if (
+            $this->id === null
+        ) {
+            $this->id = session_id();
+        }
+
+        return $this->id;
     }
 
     /**
@@ -363,6 +397,15 @@ class Session
             }
 
             if (
+                self::BUCKET_FLASH === $this->getBucket() &&
+                array_key_exists(
+                    $key,
+                    $this->getFlash()
+                )
+            ) {
+                return true;
+            }
+            elseif (
                 array_key_exists(
                     $this->getBucket(),
                     $this->getSession()
@@ -409,6 +452,14 @@ class Session
      */
     public function isEmpty()
     {
+        if (
+            self::BUCKET_FLASH === $this->getBucket()
+        ) {
+            return empty(
+                $this->getFlash()
+            );
+        }
+
         return empty(
             $this->getAll()
         );
@@ -725,6 +776,67 @@ class Session
     }
 
     /**
+     * Get a session attribute by name and remove it
+     *
+     * @param string $key The session attribute key name
+     * @param mixed $default Default value
+     * @return mixed The session attribute value if it exits.
+     */
+    public function pull($key = null, $default = null)
+    {
+        try {
+            if (
+                ! $this->isValidKey(
+                    $key
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid session attribute name.'
+                );
+            }
+
+            if (
+                ! $this->isStarted()
+            ) {
+                $this->start();
+            }
+
+            if (
+                ! $this->has(
+                    $key
+                )
+            ) {
+                return $default;
+            }
+
+            if (
+                self::BUCKET_FLASH === $this->getBucket()
+            ) {
+                $value = $this->getFlash()[$key];
+
+                unset(
+                    $this->flash[$key]
+                );
+            }
+            else {
+                $value = $this->getAll()[$key];
+
+                $this->delete(
+                    $key
+                );
+            }
+
+            return $value;
+        }
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
+            exit;
+        }
+    }
+
+    /**
      * Set the session bucket's key
      *
      * @param string $key The session bucket's key
@@ -744,6 +856,37 @@ class Session
             }
 
             $this->bucketStack[] = $key;
+        }
+        catch (
+            InvalidArgumentException $exception
+        ) {
+            echo $exception->getMessage();
+            exit;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the session flash data
+     *
+     * @param array $session The session flash data
+     * @return Session|\InvalidArgumentException
+     */
+    private function setFlash(array $flash = null)
+    {
+        try {
+            if (
+                ! is_array(
+                    $flash
+                )
+            ) {
+                throw new \InvalidArgumentException(
+                    'Invalid session flash array.'
+                );
+            }
+
+            $this->flash = $flash;
         }
         catch (
             InvalidArgumentException $exception
@@ -1097,6 +1240,23 @@ class Session
             }
 
             $this->getSession();
+
+            if (
+                empty(
+                    $this->getFlash()
+                )
+            ) {
+                $this
+                    ->setBucket(
+                        self::BUCKET_FLASH
+                    )
+                    ->setFlash(
+                        $this->getAll()
+                    )
+                    ->clearBucket()
+                    ->restoreBucket()
+                ;
+            }
 
             $this
                 ->setWrite(
