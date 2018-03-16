@@ -94,11 +94,15 @@ if (
     $session->restart();
 }
 
+$status = new \stdClass();
+$status->type = 'success';
+$status->message = 'Hello, Session flash!';
+
 $session
     ->setBucket($session::BUCKET_FLASH)
     ->set(
-        'info',
-        'Hello! Welcome to Session flash.'
+        'status',
+        $status
     )
 ;
 
@@ -226,9 +230,18 @@ $navbarItems = $navbar->getAll();
             <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
 <?php
     }
-    if (!$session->setBucket($session::BUCKET_FLASH)->isEmpty() && $session->setBucket($session::BUCKET_FLASH)->has('info')) {
+    if (!$session->setBucket($session::BUCKET_FLASH)->isEmpty()
+        && $session->setBucket($session::BUCKET_FLASH)->has('status')
+        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('status'), 'type')
+        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('status'), 'message')
+    ) {
 ?>
-            <div class="alert alert-info"><?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('info')); ?></div>
+            <div class="alert alert-<?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('status')->type); ?> alert-dismissible fade show">
+                <?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('status')->message); ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 <?php
     }
 ?>
@@ -278,7 +291,8 @@ $navbarItems = $navbar->getAll();
 ?>
                         <tr>
                             <td><?php Html::printEncoded($key); ?></td>
-                            <td><?php Html::printEncoded($value); ?></td>
+                            <td><?php Html::printEncoded(print_r($value, true)); ?></td>
+
                         </tr>
 <?php
                 }

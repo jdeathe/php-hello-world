@@ -8,6 +8,7 @@ html.home .jumbotron p {color: #aaafbd;}
 html.home span.navbar-brand:hover {color: #9d9d9d;}
 html.session caption {caption-side: top;}
 td.v {max-width: 300px; overflow-x: auto;}
+.alert-dismissible .close {padding: .1rem .5rem;}
 .embed-flow iframe {position: absolute;}
 .btn-primary {background-color: #4e7acc; border-color: #4e7acc;}
 .btn-primary:hover {background-color: rgba(78,122,204,.75); border-color: rgba(78,122,204,.1);}
