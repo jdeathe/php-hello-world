@@ -15,10 +15,6 @@ require_once 'Settings/IniSettings.php';
 require_once 'Collections/JsonFileCollection.php';
 require_once 'Collections/NavigationBar.php';
 
-$request = new Request(
-    $_SERVER
-);
-
 if (
     ini_get(
         'session.save_handler'
@@ -68,6 +64,20 @@ if (
     );
 }
 
+$viewSettings = new IniSettings(
+    sprintf(
+        '../etc/views/%s.ini',
+        basename(
+            __FILE__,
+            '.php'
+        )
+    )
+);
+
+$request = new Request(
+    $_SERVER
+);
+
 $session = new Session();
 $session->setName(
     'php-hello-world'
@@ -93,18 +103,6 @@ if (
     }
     $session->restart();
 }
-
-$status = new \stdClass();
-$status->type = 'success';
-$status->message = 'Hello, Session flash!';
-
-$session
-    ->setBucket($session::BUCKET_FLASH)
-    ->set(
-        'status',
-        $status
-    )
-;
 
 $dateTime = new \DateTime(
     null,
@@ -166,21 +164,53 @@ if (
     }
 }
 
+// Test Session flash
+if (
+    array_key_exists(
+        'flash',
+        $_GET
+    )
+) {
+    $alert = new \stdClass();
+
+    switch (
+        $_GET['flash']
+    ) {
+        case 'success':
+            $alert->type = 'success';
+            $alert->message = $viewSettings->get(
+                'alert_success_message'
+            );
+            break;
+        case 'danger':
+            $alert->type = 'danger';
+            $alert->message = $viewSettings->get(
+                'alert_danger_message'
+            );
+            break;
+        case 'info':
+        default:
+            $alert->type = 'info';
+            $alert->message = $viewSettings->get(
+                'alert_info_message'
+            );
+            break;
+    }
+
+    $session
+        ->setBucket($session::BUCKET_FLASH)
+        ->set(
+            'alert',
+            $alert
+        )
+    ;
+}
+
 // Commit session
 $session
     ->restoreBucket()
     ->save()
 ;
-
-$viewSettings = new IniSettings(
-    sprintf(
-        '../etc/views/%s.ini',
-        basename(
-            __FILE__,
-            '.php'
-        )
-    )
-);
 
 $navbar = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
@@ -231,13 +261,13 @@ $navbarItems = $navbar->getAll();
 <?php
     }
     if (!$session->setBucket($session::BUCKET_FLASH)->isEmpty()
-        && $session->setBucket($session::BUCKET_FLASH)->has('status')
-        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('status'), 'type')
-        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('status'), 'message')
+        && $session->setBucket($session::BUCKET_FLASH)->has('alert')
+        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('alert'), 'type')
+        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('alert'), 'message')
     ) {
 ?>
-            <div class="alert alert-<?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('status')->type); ?> alert-dismissible fade show">
-                <?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('status')->message); ?>
+            <div class="alert alert-<?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('alert')->type); ?> alert-dismissible fade show">
+                <?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('alert')->message); ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
