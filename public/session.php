@@ -176,21 +176,43 @@ if (
     switch (
         $_GET['flash']
     ) {
-        case 'success':
-            $alert->type = 'success';
+        case '0':
+        case 'emerg':
+        case '1':
+        case 'alert':
+        case '2':
+        case 'crit':
+        case '3':
+        case 'error':
+            $alert->context = 'danger';
+            $alert->dismissable = false;
             $alert->message = $viewSettings->get(
-                'alert_success_message'
+                'alert_error_message'
             );
             break;
-        case 'danger':
-            $alert->type = 'danger';
+        case '4':
+        case 'warning':
+            $alert->context = 'warning';
+            $alert->dismissable = true;
             $alert->message = $viewSettings->get(
-                'alert_danger_message'
+                'alert_warning_message'
             );
             break;
+        case '5':
+        case 'notice':
+            $alert->context = 'success';
+            $alert->dismissable = true;
+            $alert->message = $viewSettings->get(
+                'alert_notice_message'
+            );
+            break;
+        case '6':
         case 'info':
+        case '7':
+        case 'debug':
         default:
-            $alert->type = 'info';
+            $alert->context = 'info';
+            $alert->dismissable = true;
             $alert->message = $viewSettings->get(
                 'alert_info_message'
             );
@@ -262,15 +284,22 @@ $navbarItems = $navbar->getAll();
     }
     if (!$session->setBucket($session::BUCKET_FLASH)->isEmpty()
         && $session->setBucket($session::BUCKET_FLASH)->has('alert')
-        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('alert'), 'type')
+        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('alert'), 'context')
         && property_exists($session->setBucket($session::BUCKET_FLASH)->get('alert'), 'message')
+        && property_exists($session->setBucket($session::BUCKET_FLASH)->get('alert'), 'dismissable')
     ) {
 ?>
-            <div class="alert alert-<?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('alert')->type); ?> alert-dismissible fade show">
-                <?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('alert')->message); ?>
+            <div class="alert alert-<?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('alert')->context); ?><?php $session->setBucket($session::BUCKET_FLASH)->get('alert')->dismissable ? print ' alert-dismissible fade show' : null; ?>">
+                <?php Html::printEncoded($session->setBucket($session::BUCKET_FLASH)->get('alert')->message) . PHP_EOL; ?>
+<?php
+        if ($session->setBucket($session::BUCKET_FLASH)->get('alert')->dismissable === true) {
+?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+<?php
+        }
+?>
             </div>
 <?php
     }
