@@ -419,6 +419,7 @@ class Session
                 return true;
             }
             elseif (
+                self::BUCKET_FLASH !== $this->getBucket() &&
                 array_key_exists(
                     $this->getBucket(),
                     $this->getSession()
