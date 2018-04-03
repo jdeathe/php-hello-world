@@ -26,33 +26,17 @@ class Alert implements AlertInterface
     protected $message;
 
     /**
-     * @param string $message The Alert message
-     * @param integer $level The Alert level
-     * @param boolean $dismissible Allow the Alert to be dismissed
-     * @param string $label The optional Alert type label
+     * @param array $attributes The Alert attributes
      */
-    public function __construct($message = '', $level = self::LEVEL_INFO, $dismissible = false, $label = null)
+    public function __construct(array $attributes = array())
     {
-        $this
-            ->setDismissible(
-                $dismissible
-            )
-            ->setLevel(
-                $level
-            )
-            ->setMessage(
-                $message
-            )
-        ;
+        $this->level = Alert::LEVEL_INFO;
 
         if (
-            is_string(
-                $label
-            ) &&
-            $label != ''
+            ! empty($attributes)
         ) {
-            $this->setLabel(
-                $label
+            $this->populate(
+                $attributes
             );
         }
     }
@@ -68,13 +52,49 @@ class Alert implements AlertInterface
     }
 
     /**
+     * Create a new Alert instance.
+     *
+     * @param array $attributes The Alert attributes
+     * @return Alert
+     */
+    public static function create(array $attributes = array())
+    {
+        return new self(
+            $attributes
+        );
+    }
+
+    /**
+     * Extract the Alert attributes
+     *
+     * @return array The Alert attributes
+     */
+    public function extract()
+    {
+        $attributes = array();
+
+        $getters = array(
+            'dissmissible' => 'getDismissible',
+            'message' => 'getMessage',
+            'label' => 'getLabel',
+            'level' => 'getLevel'
+        );
+
+        foreach ($getters as $attribute => $getter) {
+            $attributes[$attribute] = $this->{$getters[$attribute]}();
+        }
+
+        return $attributes;
+    }
+
+    /**
      * Determine if the Alert is dissmissible.
      *
      * @return boolean True if Alert is dissmissible
      */
     public function getDismissible()
     {
-        return $this->dismissible;
+        return (boolean) $this->dismissible;
     }
 
     /**
@@ -84,7 +104,7 @@ class Alert implements AlertInterface
      */
     public function getMessage()
     {
-        return $this->message;
+        return (string) $this->message;
     }
 
     /**
@@ -127,9 +147,55 @@ class Alert implements AlertInterface
         return $this->label;
     }
 
+    /**
+     * Get the Alert level.
+     *
+     * @return integer The Alert level
+     */
     public function getLevel()
     {
-        return $this->level;
+        return (int) $this->level;
+    }
+
+    /**
+     * Populates the Alert from attributes
+     *
+     * @param array $attributes The Alert attributes
+     * @return Alert
+     */
+    public function populate(array $attributes = array())
+    {
+        if (
+            empty(
+                $attributes
+            )
+        ) {
+            return $this;
+        }
+
+        $setters = array(
+            'dissmissible' => 'setDismissible',
+            'message' => 'setMessage',
+            'label' => 'setLabel',
+            'level' => 'setLevel'
+        );
+
+        foreach ($attributes as $attribute => $value) {
+            if (
+                ! array_key_exists(
+                    $attribute,
+                    $setters
+                )
+            ) {
+                continue;
+            }
+
+            $this->{$setters[$attribute]}(
+                $value
+            );
+        }
+
+        return $this;
     }
 
     /**
@@ -171,10 +237,11 @@ class Alert implements AlertInterface
     {
         try {
             if (
-                ! is_string($message)
+                ! is_string($message) ||
+                '' === $message
             ) {
                 throw new \InvalidArgumentException(
-                    'Invalid message - string required.'
+                    'Invalid message - non-empty string required.'
                 );
             }
 

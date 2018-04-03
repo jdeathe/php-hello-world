@@ -16,7 +16,27 @@ interface AlertInterface
     const LABEL_NOTICE = 'notice';
     const LABEL_INFO = 'info';
 
+    /**
+     * Gets the Alert message.
+     *
+     * @return string The Alert message
+     */
     public function __toString();
+
+    /**
+     * Create a new Alert instance.
+     *
+     * @param array $attributes The Alert attributes
+     * @return AlertInterface
+     */
+    public static function create(array $attributes = array());
+
+    /**
+     * Extract the Alert attributes
+     *
+     * @return array The Alert attributes
+     */
+    public function extract();
 
     public function getDismissible();
 
@@ -25,6 +45,14 @@ interface AlertInterface
     public function getLabel();
 
     public function getLevel();
+
+    /**
+     * Populates the Alert from attributes
+     *
+     * @param array $attributes The Alert attributes
+     * @return AlertInterface
+     */
+    public function populate(array $attributes = array());
 
     public function setDismissible($dismissible);
 

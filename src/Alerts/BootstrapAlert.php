@@ -8,7 +8,26 @@ class BootstrapAlert extends Alert implements AlertInterface
     const LABEL_DANGER = 'danger';
     const LABEL_SUCCESS = 'success';
 
-	/**
+    /**
+     * @param array $attributes The Alert attributes
+     */
+    public function __construct(array $attributes = array())
+    {
+        parent::__construct($attributes);
+    }
+
+    /**
+     * Create a new Alert instance.
+     *
+     * @param array $attributes The Alert attributes
+     * @return BootstrapAlert
+     */
+    public static function create(array $attributes = array())
+    {
+        return new self($attributes);
+    }
+
+    /**
      * Get the Alert type/contextual label.
      *
      * @return string The label

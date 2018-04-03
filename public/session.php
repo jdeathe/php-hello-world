@@ -8,7 +8,7 @@ use jdeathe\PhpHelloWorld\Settings\IniSettings;
 use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
 use jdeathe\PhpHelloWorld\Collections\NavigationBar;
 use jdeathe\PhpHelloWorld\Alerts\Alerts;
-use jdeathe\PhpHelloWorld\Alerts\BootstrapAlert;
+use jdeathe\PhpHelloWorld\Alerts\BootstrapAlert as Alert;
 
 require_once 'Http/Request.php';
 require_once 'Http/Session.php';
@@ -82,8 +82,7 @@ $request = new Request(
     $_SERVER
 );
 
-$session = new Session();
-$session->setName(
+$session = Session::create()->setName(
     'php-hello-world'
 );
 
@@ -146,6 +145,8 @@ if(
     );
 }
 
+$session->restoreBucket();
+
 // Test Session methods
 if (
     array_key_exists(
@@ -175,21 +176,18 @@ if (
         $_GET
     )
 ) {
-    $flashAlerts = new Alerts();
-    $flashAlert = new BootstrapAlert();
-
-    $flashAlert->setLevel(
+    $alert = Alert::create()->setLevel(
         (int) $_GET['flash']
     );
 
     switch (
-        $flashAlert->getLevel()
+        $alert->getLevel()
     ) {
         case 0:
         case 1:
         case 2:
         case 3:
-            $flashAlert
+            $alert
                 ->setMessage(
                     $viewSettings->get(
                         'alert_error_message'
@@ -198,7 +196,7 @@ if (
             ;
             break;
         case 4:
-            $flashAlert
+            $alert
                 ->setDismissible(
                     true
                 )
@@ -210,7 +208,7 @@ if (
             ;
             break;
         case 5:
-            $flashAlert
+            $alert
                 ->setDismissible(
                     true
                 )
@@ -224,7 +222,7 @@ if (
         case 6:
         case 7:
         default:
-            $flashAlert
+            $alert
                 ->setDismissible(
                     true
                 )
@@ -237,38 +235,72 @@ if (
             break;
     }
 
-    $flashAlerts->add(
-        $flashAlert
-    );
-
-    $flashAlerts->add(
-        new BootstrapAlert(
-            'Let this be a warning.',
-            BootstrapAlert::LEVEL_WARNING
-        )
-    );
-
-    $flashAlerts->add(
-        new BootstrapAlert(
-            'An informational message.',
-            BootstrapAlert::LEVEL_INFO
-        )
-    );
-
     $session
-        ->setBucket($session::BUCKET_FLASH)
-        ->set(
-            'Alerts',
-            $flashAlerts
+        ->setBucket(
+            $session::BUCKET_FLASH_WRITE
         )
+        ->set(
+            'alerts',
+            Alerts::create(
+                $alert
+            )
+            ->add(
+                $alert
+            )
+        )
+        ->restoreBucket()
     ;
+
+    unset(
+        $alert
+    );
 }
 
+$alerts = Alerts::create(
+    Alert::create()
+);
+
+if (
+    $request->isTlsTerminated()
+) {
+    $alerts->add(
+        Alert::create()
+            ->setDismissible(
+                true
+            )
+            ->setLevel(
+                Alert::LEVEL_INFO
+            )
+            ->setMessage(
+                $viewSettings->get(
+                    'alert_tls_terminated',
+                    'SSL/TLS termination has been carried out upstream.'
+                )
+            )
+    );
+}
+
+array_map(
+    function($alert) use ($alerts) {
+        $alerts->add(
+            $alert
+        );
+    },
+    $session
+        ->setBucket(
+            $session::BUCKET_FLASH_READ
+        )
+        ->get(
+            'alerts',
+            Alerts::create(
+                Alert::create()
+            )
+        )
+        ->getAll()
+);
+
 // Commit session
-$session
-    ->restoreBucket()
-    ->save()
-;
+$session->save();
 
 $navbar = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
@@ -313,28 +345,21 @@ $navbarItems = $navbar->getAll();
         </nav>
         <div class="container">
 <?php
-    if ($request->isTlsTerminated()) {
+    foreach ($alerts->getAll() as $alert) {
 ?>
-            <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
+    <div class="alert alert-<?php Html::printEncoded($alert->getLabel()); ?><?php $alert->getDismissible() ? print ' alert-dismissible fade show' : null; ?>">
+        <?php Html::printEncoded($alert->getMessage()) . PHP_EOL; ?>
 <?php
-    }
-    if ($session->setBucket($session::BUCKET_FLASH)->has('Alerts')) {
-        foreach ($session->setBucket($session::BUCKET_FLASH)->get('Alerts')->getAll() as $alert) {
+        if ($alert->getDismissible() === true) {
 ?>
-            <div class="alert alert-<?php Html::printEncoded($alert->getLabel()); ?><?php $alert->getDismissible() ? print ' alert-dismissible fade show' : null; ?>">
-                <?php Html::printEncoded($alert->getMessage()) . PHP_EOL; ?>
-<?php
-                if ($alert->getDismissible() === true) {
-?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-<?php
-                }
-?>
-            </div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
 <?php
         }
+?>
+    </div>
+<?php
     }
 ?>
             <h1><?php Html::printEncoded($viewSettings->get('heading')); ?></h1>
