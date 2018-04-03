@@ -82,10 +82,10 @@ $request = new Request(
     $_SERVER
 );
 
+// Session creation and validation
 $session = Session::create()->setName(
     'php-hello-world'
 );
-
 if (
     $session->isExpired()
 ) {
@@ -107,13 +107,13 @@ if (
     $session->restart();
 }
 
+// Session visits
 $dateTime = new \DateTime(
     null,
     new \DateTimeZone(
         'UTC'
     )
 );
-
 $session
     ->setBucket(
         'visits'
@@ -131,7 +131,6 @@ $session
         )
     )
 ;
-
 if(
     ! $session->has(
         'first'
@@ -144,7 +143,6 @@ if(
         )
     );
 }
-
 $session->restoreBucket();
 
 // Test Session methods
@@ -179,7 +177,6 @@ if (
     $alert = Alert::create()->setLevel(
         (int) $_GET['flash']
     );
-
     switch (
         $alert->getLevel()
     ) {
@@ -234,7 +231,6 @@ if (
             ;
             break;
     }
-
     $session
         ->setBucket(
             $session::BUCKET_FLASH_WRITE
@@ -249,17 +245,25 @@ if (
             )
         )
         ->restoreBucket()
+        ->save()
     ;
-
-    unset(
-        $alert
+    header(
+        sprintf(
+            'Location: %s',
+            $request->getServerParams()['SCRIPT_NAME']
+        ),
+        true,
+        302
     );
+    exit;
 }
+// Commit session
+$session->save();
 
+// Alerts
 $alerts = Alerts::create(
     Alert::create()
 );
-
 if (
     $request->isTlsTerminated()
 ) {
@@ -279,7 +283,6 @@ if (
             )
     );
 }
-
 array_map(
     function($alert) use ($alerts) {
         $alerts->add(
@@ -298,9 +301,6 @@ array_map(
         )
         ->getAll()
 );
-
-// Commit session
-$session->save();
 
 $navbar = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
