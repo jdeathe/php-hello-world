@@ -130,23 +130,16 @@ class Session
             $this->start();
         }
 
-        // if (
-        //     array_key_exists(
-        //         $this->getBucket(),
-        //         $this->getSession()
-        //     )
-        // ) {
-        //     unset(
-        //         $this->session[$this->getBucket()]
-        //     );
-        // }
-
-        $this->session = array_diff_key(
-            $this->session,
-            array(
-                $this->getBucket() => null
+        if (
+            array_key_exists(
+                $this->getBucket(),
+                $this->getSession()
             )
-        );
+        ) {
+            unset(
+                $this->session[$this->getBucket()]
+            );
+        }
 
         return $this;
     }
