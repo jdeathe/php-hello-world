@@ -174,8 +174,17 @@ if (
         $_GET
     )
 ) {
+    // Limit to valid level
+    $alertLevel = (int) $_GET['flash'];
+    if (
+        $alertLevel < Alert::LEVEL_EMERG ||
+        $alertLevel > Alert::LEVEL_DEBUG
+    ) {
+        $alertLevel = Alert::LEVEL_ERR;
+    }
+    // Create Alert for level
     $alert = Alert::create()->setLevel(
-        (int) $_GET['flash']
+        $alertLevel
     );
     switch (
         $alert->getLevel()
@@ -231,6 +240,7 @@ if (
             ;
             break;
     }
+    // Add Alert to Alerts and store in Session flash
     $session
         ->setBucket(
             $session::BUCKET_FLASH_WRITE
@@ -247,6 +257,7 @@ if (
         ->restoreBucket()
         ->save()
     ;
+    // Redirect to show Alerts in Session flash
     header(
         sprintf(
             'Location: %s',
