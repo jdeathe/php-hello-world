@@ -145,44 +145,6 @@ class Session
     }
 
     /**
-     * Clone an associative array
-     *
-     * @param array $array The array to clone
-     */
-    private function cloneArray(array $array)
-    {
-        array_walk_recursive(
-            $array,
-            function (&$value) {
-                if (
-                    is_array(
-                        $value
-                    )
-                ) {
-                    $value = array_replace(
-                        $value,
-                        array()
-                    );
-
-                    return;
-                }
-
-                if (
-                    is_object(
-                        $value
-                    )
-                ) {
-                    $value = clone $value;
-
-                    return;
-                }
-            }
-        );
-
-        return $array;
-    }
-
-    /**
      * Delete a session attribute by name
      *
      * @param string $key The session attribute key name
@@ -634,13 +596,12 @@ class Session
             return $this;
         }
 
-        $flashWrite = $this->cloneArray(
-            $this
-                ->setBucket(
-                    self::BUCKET_FLASH_WRITE
-                )
-                ->getAll()
-        );
+        $flashWrite = $this
+            ->setBucket(
+                self::BUCKET_FLASH_WRITE
+            )
+            ->getAll()
+        ;
 
         $this
             ->clearBucket()
