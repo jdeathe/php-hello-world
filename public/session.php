@@ -189,10 +189,10 @@ if (
     switch (
         $alert->getLevel()
     ) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
+        case Alert::LEVEL_EMERG:
+        case Alert::LEVEL_ALERT:
+        case Alert::LEVEL_CRIT:
+        case Alert::LEVEL_ERR:
             $alert
                 ->setMessage(
                     $viewSettings->get(
@@ -201,7 +201,7 @@ if (
                 )
             ;
             break;
-        case 4:
+        case Alert::LEVEL_WARNING:
             $alert
                 ->setDismissible(
                     true
@@ -213,7 +213,7 @@ if (
                 )
             ;
             break;
-        case 5:
+        case Alert::LEVEL_NOTICE:
             $alert
                 ->setDismissible(
                     true
@@ -225,8 +225,8 @@ if (
                 )
             ;
             break;
-        case 6:
-        case 7:
+        case Alert::LEVEL_INFO:
+        case Alert::LEVEL_DEBUG:
         default:
             $alert
                 ->setDismissible(
