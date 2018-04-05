@@ -19,55 +19,6 @@ require_once 'Collections/NavigationBar.php';
 require_once 'Alerts/Alerts.php';
 require_once 'Alerts/BootstrapAlert.php';
 
-if (
-    ini_get(
-        'session.save_handler'
-    ) == 'memcached' &&
-    ! empty(
-        substr_count(
-            ini_get(
-                'session.save_path'
-            ),
-            ','
-        )
-    )
-) {
-    ini_set(
-        'memcached.sess_binary',
-        'On'
-    );
-    ini_set(
-        'memcached.sess_consistent_hash',
-        'On'
-    );
-    ini_set(
-        'memcached.sess_number_of_replicas',
-        (string) substr_count(
-            ini_get(
-                'session.save_path'
-            ),
-            ','
-        )
-    );
-    ini_set(
-        'memcached.sess_remove_failed',
-        '1'
-    );
-}
-
-if (
-    version_compare(
-        PHP_VERSION,
-        '5.5.2',
-        '>='
-    )
-) {
-    ini_set(
-        'session.use_strict_mode',
-        '1'
-    );
-}
-
 $viewSettings = new IniSettings(
     sprintf(
         '../etc/views/%s.ini',

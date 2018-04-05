@@ -1,6 +1,8 @@
 <?php
 namespace jdeathe\PhpHelloWorld\Http;
 
+require_once 'Config/Session.php';
+
 /**
  * PHP session helper
  */
