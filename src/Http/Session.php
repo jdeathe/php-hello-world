@@ -450,9 +450,11 @@ class Session
      */
     public function isEmpty()
     {
-        return count(
-            $this->getAllBuckets()
-        ) === 0;
+        return
+            count(
+                $this->getAll()
+            ) === 0
+        ;
     }
 
     /**
