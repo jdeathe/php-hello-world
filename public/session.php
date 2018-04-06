@@ -231,9 +231,6 @@ if (
 ) {
     $alerts->add(
         Alert::create()
-            ->setDismissible(
-                true
-            )
             ->setLevel(
                 Alert::LEVEL_INFO
             )
