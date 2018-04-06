@@ -5,13 +5,11 @@ if (
     ini_get(
         'session.save_handler'
     ) == 'memcached' &&
-    ! empty(
-        substr_count(
-            ini_get(
-                'session.save_path'
-            ),
-            ','
-        )
+    0 !== substr_count(
+        ini_get(
+            'session.save_path'
+        ),
+        ','
     )
 ) {
     ini_set(

@@ -42,12 +42,12 @@ if (
 ) {
     if (
         ! $session->invalidate()
-    ){
+    ) {
         $session->destroy();
         header(
             sprintf(
                 '%s %s Session Terminated',
-                $request->getServerParams()['SERVER_PROTOCOL'],
+                $_SERVER['SERVER_PROTOCOL'],
                 403
             ),
             true,
@@ -212,7 +212,7 @@ if (
     header(
         sprintf(
             'Location: %s',
-            $request->getServerParams()['SCRIPT_NAME']
+            $_SERVER['SCRIPT_NAME']
         ),
         true,
         302
@@ -348,7 +348,7 @@ $navbarItems = $navbar->getAll();
                 </table>
             </div>
 <?php
-    if (!empty($session->getAllBuckets())) {
+    if (count($session->getAllBuckets()) !== 0) {
 ?>
             <h2>Bucket Contents</h2>
 <?php

@@ -232,7 +232,9 @@ class Session
                 return $default;
             }
 
-            return $this->getAll()[$key];
+            $all = $this->getAll();
+
+            return $all[$key];
         }
         catch (
             InvalidArgumentException $exception
@@ -264,7 +266,7 @@ class Session
             $this->loadBucket();
         }
 
-        return $this->getSession()[$this->getBucket()];
+        return $this->session[$this->getBucket()];
     }
 
     /**
@@ -281,20 +283,20 @@ class Session
         }
 
         if (
-            empty(
-                $this->getSession()
-            )
+            null === $this->getSession()
         ) {
             return array();
         }
 
+        $session = $this->getSession();
+
         return array_filter(
             array_keys(
-                $this->getSession()
+                $session
             ),
-            function($key) {
+            function($key) use ($session) {
                 return is_array(
-                    $this->getSession()[$key]
+                    $session[$key]
                 );
             }
         );
@@ -448,9 +450,9 @@ class Session
      */
     public function isEmpty()
     {
-        return empty(
-            $this->getAll()
-        );
+        return count(
+            $this->getAllBuckets()
+        ) === 0;
     }
 
     /**
@@ -725,7 +727,8 @@ class Session
                 return $default;
             }
 
-            $value = $this->getAll()[$key];
+            $all = $this->getAll();
+            $value = $all[$key];
 
             $this->delete(
                 $key
