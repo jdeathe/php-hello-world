@@ -133,8 +133,8 @@ class NavigationBar implements CollectionItemsInterface {
     private static function visible($url) {
         switch ($url) {
             case '/_phpinfo.php':
+            case '/_sessioninfo.php':
             case '/index_alt.php':
-            case '/session.php':
                 if (realpath(
                         $_SERVER['DOCUMENT_ROOT'] . $url
                 )) {
