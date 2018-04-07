@@ -1,23 +1,23 @@
 <?php
 namespace jdeathe\PhpHelloWorld;
 
+use jdeathe\PhpHelloWorld\Alerts\Alerts;
+use jdeathe\PhpHelloWorld\Alerts\BootstrapAlert as Alert;
+use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
+use jdeathe\PhpHelloWorld\Collections\NavigationBar;
 use jdeathe\PhpHelloWorld\Http\Request;
 use jdeathe\PhpHelloWorld\Http\Session;
 use jdeathe\PhpHelloWorld\Output\Html;
 use jdeathe\PhpHelloWorld\Settings\IniSettings;
-use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
-use jdeathe\PhpHelloWorld\Collections\NavigationBar;
-use jdeathe\PhpHelloWorld\Alerts\Alerts;
-use jdeathe\PhpHelloWorld\Alerts\BootstrapAlert as Alert;
 
+require_once 'Alerts/Alerts.php';
+require_once 'Alerts/BootstrapAlert.php';
+require_once 'Collections/JsonFileCollection.php';
+require_once 'Collections/NavigationBar.php';
 require_once 'Http/Request.php';
 require_once 'Http/Session.php';
 require_once 'Output/Html.php';
 require_once 'Settings/IniSettings.php';
-require_once 'Collections/JsonFileCollection.php';
-require_once 'Collections/NavigationBar.php';
-require_once 'Alerts/Alerts.php';
-require_once 'Alerts/BootstrapAlert.php';
 
 $request = new Request(
     $_SERVER
@@ -306,18 +306,18 @@ $navbarItems = $navbar->getAll();
 <?php
     foreach ($alerts->getAll() as $alert) {
 ?>
-    <div class="alert alert-<?php Html::printEncoded($alert->getLabel()); ?><?php $alert->getDismissible() ? print ' alert-dismissible fade show' : null; ?>">
-        <?php Html::printEncoded($alert->getMessage()) . PHP_EOL; ?>
+            <div class="alert alert-<?php Html::printEncoded($alert->getLabel()); ?><?php $alert->getDismissible() ? print ' alert-dismissible fade show' : null; ?>">
+                <?php Html::printEncoded($alert->getMessage()) . PHP_EOL; ?>
 <?php
         if ($alert->getDismissible() === true) {
 ?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
 <?php
         }
 ?>
-    </div>
+            </div>
 <?php
     }
 ?>
