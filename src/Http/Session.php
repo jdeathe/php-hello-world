@@ -458,6 +458,20 @@ class Session
     }
 
     /**
+     * Check if all the session buckets are empty
+     *
+     * @return boolean
+     */
+    public function isEmptyBuckets()
+    {
+        return
+            count(
+                $this->getAllBuckets()
+            ) === 0
+        ;
+    }
+
+    /**
      * Check if the session has expired
      *
      * Expired session should be invalidated; delete session data and migrate.
