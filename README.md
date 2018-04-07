@@ -49,6 +49,22 @@ Tear down the services when not in use.
 $ docker-compose down
 ```
 
+## Alternative Services
+
+The default Apache PHP environment for the httpd service is Apache 2.2 / PHP 5.3 (Prefork) - to run the services with alternative images you need to specify both the base and override docker-compose configuration files.
+
+### Bringing Up the Apache 2.2 / PHP 5.3 (FastCGI) Services
+
+```
+$ docker-compose -f docker-compose.yml -f docker-compose-v1.yml up -d
+```
+
+### Bringing Up the Apache 2.4 / PHP 5.6 (PHP-FPM) Services
+
+```
+$ docker-compose -f docker-compose.yml -f docker-compose-v2.yml up -d
+```
+
 ## Xdebug debugging
 
 ### IDE Key
