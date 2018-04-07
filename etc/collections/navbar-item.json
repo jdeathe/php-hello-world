@@ -49,6 +49,22 @@
 		}
 	}, {
 		"type": "navbar-item",
+		"id": "6",
+		"attributes": {
+			"label": "Session info",
+			"url": "/_sessioninfo.php",
+			"condition": {
+				"function": [
+					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
+					"visible"
+				],
+				"parameter": [
+					"/_sessioninfo.php"
+				]
+			}
+		}
+	}, {
+		"type": "navbar-item",
 		"id": "3",
 		"attributes": {
 			"label": "Apache status",
