@@ -19,16 +19,6 @@ require_once 'Collections/NavigationBar.php';
 require_once 'Alerts/Alerts.php';
 require_once 'Alerts/BootstrapAlert.php';
 
-$viewSettings = new IniSettings(
-    sprintf(
-        '../etc/views/%s.ini',
-        basename(
-            __FILE__,
-            '.php'
-        )
-    )
-);
-
 $request = new Request(
     $_SERVER
 );
@@ -57,6 +47,16 @@ if (
     }
     $session->restart();
 }
+
+$viewSettings = new IniSettings(
+    sprintf(
+        '../etc/views/%s.ini',
+        basename(
+            __FILE__,
+            '.php'
+        )
+    )
+);
 
 // Session visits
 $dateTime = new \DateTime(
