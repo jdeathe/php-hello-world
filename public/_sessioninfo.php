@@ -345,7 +345,7 @@ $navbarItems = $navbar->getAll();
                 </table>
             </div>
 <?php
-    if (!$session->isEmptyBuckets()) {
+    if ($session->hasBuckets()) {
 ?>
             <h2>Bucket Contents</h2>
 <?php

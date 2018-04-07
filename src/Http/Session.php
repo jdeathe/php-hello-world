@@ -427,6 +427,20 @@ class Session
     }
 
     /**
+     * Check if any session buckets have been loaded
+     *
+     * @return boolean
+     */
+    public function hasBuckets()
+    {
+        return
+            count(
+                $this->getAllBuckets()
+            ) !== 0
+        ;
+    }
+
+    /**
      * Invalidate the current session.
      *
      * Delete session data and migrate to a new session id.
@@ -453,20 +467,6 @@ class Session
         return
             count(
                 $this->getAll()
-            ) === 0
-        ;
-    }
-
-    /**
-     * Check if all the session buckets are empty
-     *
-     * @return boolean
-     */
-    public function isEmptyBuckets()
-    {
-        return
-            count(
-                $this->getAllBuckets()
             ) === 0
         ;
     }
