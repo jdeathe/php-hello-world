@@ -1,19 +1,21 @@
 <?php
 namespace jdeathe\PhpHelloWorld;
 
-use jdeathe\PhpHelloWorld\Http\Request;
-use jdeathe\PhpHelloWorld\Output\Html;
-use jdeathe\PhpHelloWorld\Output\Info;
-use jdeathe\PhpHelloWorld\Settings\IniSettings;
+use jdeathe\PhpHelloWorld\Alerts\Alerts;
+use jdeathe\PhpHelloWorld\Alerts\BootstrapAlert as Alert;
 use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
 use jdeathe\PhpHelloWorld\Collections\NavigationBar;
+use jdeathe\PhpHelloWorld\Http\Request;
+use jdeathe\PhpHelloWorld\Output\Html;
+use jdeathe\PhpHelloWorld\Settings\IniSettings;
 
-require_once 'Http/Request.php';
-require_once 'Output/Html.php';
-require_once 'Output/Info.php';
-require_once 'Settings/IniSettings.php';
+require_once 'Alerts/Alerts.php';
+require_once 'Alerts/BootstrapAlert.php';
 require_once 'Collections/JsonFileCollection.php';
 require_once 'Collections/NavigationBar.php';
+require_once 'Http/Request.php';
+require_once 'Output/Html.php';
+require_once 'Settings/IniSettings.php';
 
 $request = new Request(
     $_SERVER
@@ -28,6 +30,27 @@ $viewSettings = new IniSettings(
         )
     )
 );
+
+// Alerts
+$alerts = Alerts::create(
+    Alert::create()
+);
+if (
+    $request->isTlsTerminated()
+) {
+    $alerts->add(
+        Alert::create()
+            ->setLevel(
+                Alert::LEVEL_INFO
+            )
+            ->setMessage(
+                $viewSettings->get(
+                    'alert_tls_terminated',
+                    'SSL/TLS termination has been carried out upstream.'
+                )
+            )
+    );
+}
 
 $navbar = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
@@ -72,9 +95,20 @@ $navbarItems = $navbar->getAll();
         </nav>
         <div class="container-flow">
 <?php
-    if ($request->isTlsTerminated()) {
+    foreach ($alerts->getAll() as $alert) {
 ?>
-            <div class="alert alert-info"><?php Html::printEncoded($viewSettings->get('alert_tls_terminated', 'SSL/TLS termination has been carried out upstream.')); ?></div>
+            <div class="alert alert-<?php Html::printEncoded($alert->getLabel()); ?><?php $alert->getDismissible() ? print ' alert-dismissible fade show' : null; ?>">
+                <?php Html::printEncoded($alert->getMessage()) . PHP_EOL; ?>
+<?php
+        if ($alert->getDismissible() === true) {
+?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+<?php
+        }
+?>
+            </div>
 <?php
     }
 ?>
