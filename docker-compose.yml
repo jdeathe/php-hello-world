@@ -20,18 +20,19 @@ services:
   # Apache PHP web server
   httpd:
     build:
-      context: "."
-      dockerfile: "Dockerfile"
       args:
+        IMAGE: "jdeathe/centos-ssh-apache-php:1.10.4"
         PACKAGE_NAME: "app"
         PACKAGE_PATH: "/opt/app"
+      context: "."
+      dockerfile: "Dockerfile"
     depends_on:
       - "memcached_1"
       - "memcached_2"
     environment:
       APACHE_ERROR_LOG_LEVEL: "info"
       APACHE_MOD_SSL_ENABLED: "true"
-      APACHE_MPM: "event"
+      APACHE_MPM: "prefork"
       APACHE_OPERATING_MODE: "development"
       APACHE_SERVER_NAME: "php-hello-world.dev.local"
       # XDebug IDE key.

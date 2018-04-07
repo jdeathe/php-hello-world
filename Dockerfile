@@ -1,4 +1,6 @@
-FROM jdeathe/centos-ssh-apache-php:2.2.4
+ARG IMAGE="jdeathe/centos-ssh-apache-php:1.10.4"
+
+FROM "${IMAGE}"
 
 ARG PACKAGE_NAME="app"
 ARG PACKAGE_PATH="/opt/${PACKAGE_NAME}"
@@ -10,22 +12,38 @@ ENV APACHE_CONTENT_ROOT="/var/www/${PACKAGE_NAME}" \
 	APACHE_PUBLIC_DIRECTORY="public" \
 	PACKAGE_PATH="/opt/${PACKAGE_NAME}"
 
-RUN rpm --rebuilddb \
-	&& yum -y install \
-		--setopt=tsflags=nodocs \
-		--disableplugin=fastestmirror \
-		php56u-pecl-xdebug \
-	&& sed -i \
-		-e 's~^; .*$~~' \
-		-e 's~^;*$~~' \
-		-e '/^$/d' \
-		-e 's~^\[~\n\[~g' \
-		/etc/php.d/15-xdebug.ini \
-	&& sed -i \
-		-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
-		-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
-		-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
-		/etc/php.d/10-opcache.ini \
+RUN $(\
+		if [[ ${IMAGE} =~ :1\.[0-9]+\.[0-9]+ ]]; then \
+			rpm --rebuilddb \
+			&& yum -y install \
+				--setopt=tsflags=nodocs \
+				--disableplugin=fastestmirror \
+				php-pecl-xdebug \
+			&& sed -i \
+				-e 's~^; .*$~~' \
+				-e 's~^;*$~~' \
+				-e '/^$/d' \
+				-e 's~^\[~\n\[~g' \
+				/etc/php.d/xdebug.ini; \
+		elif [[ ${IMAGE} =~ :2\.[0-9]+\.[0-9]+ ]]; then \
+			rpm --rebuilddb \
+			&& yum -y install \
+				--setopt=tsflags=nodocs \
+				--disableplugin=fastestmirror \
+				php56u-pecl-xdebug \
+			&& sed -i \
+				-e 's~^; .*$~~' \
+				-e 's~^;*$~~' \
+				-e '/^$/d' \
+				-e 's~^\[~\n\[~g' \
+				/etc/php.d/15-xdebug.ini \
+			&& sed -i \
+				-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
+				-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
+				-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
+				/etc/php.d/10-opcache.ini; \
+		fi \
+	) \
 	&& rm -rf /var/cache/yum/* \
 	&& yum clean all \
 	&& rm -rf /opt/app \
