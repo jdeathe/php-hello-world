@@ -25,7 +25,9 @@ $request = new Request(
 
 // Session creation and validation
 $session = Session::create()->setName(
-    'php-hello-world'
+    ini_get(
+        'session.name'
+    )
 );
 if (
     $session->isExpired()
