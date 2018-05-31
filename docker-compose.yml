@@ -21,7 +21,7 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php:1.10.4"
+        IMAGE: "jdeathe/centos-ssh-apache-php:1.10.5"
         PACKAGE_NAME: "app"
         PACKAGE_PATH: "/opt/app"
       context: "."
@@ -37,6 +37,7 @@ services:
       APACHE_SERVER_NAME: "php-hello-world.dev.local"
       # XDebug IDE key.
       DBGP_IDEKEY: "${DBGP_IDEKEY}"
+      PHP_OPTIONS_SESSION_NAME: "php-hello-world"
       PHP_OPTIONS_SESSION_SAVE_HANDLER: "memcached"
       PHP_OPTIONS_SESSION_SAVE_PATH: "memcached_1:11211:50,memcached_2:11211:50"
       SSH_AUTHORIZED_KEYS: "${SSH_AUTHORIZED_KEYS}"
