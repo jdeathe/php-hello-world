@@ -3,6 +3,6 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php:2.2.4"
+        IMAGE: "jdeathe/centos-ssh-apache-php:2.2.5"
     environment:
       APACHE_MPM: "event"
