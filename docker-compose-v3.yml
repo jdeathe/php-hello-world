@@ -1,0 +1,8 @@
+version: "3.0"
+services:
+  httpd:
+    build:
+      args:
+        IMAGE: "jdeathe/centos-ssh-apache-php:3.0.0"
+    environment:
+      APACHE_MPM: "event"
