@@ -6,3 +6,7 @@ services:
         IMAGE: "jdeathe/centos-ssh-apache-php:3.0.0"
     environment:
       APACHE_MPM: "event"
+  memcached_1:
+    image: "jdeathe/centos-ssh-memcached:2.0.0"
+  memcached_2:
+    image: "jdeathe/centos-ssh-memcached:2.0.0"
