@@ -25,6 +25,14 @@ Copy `.env.example` to `.env` and change values to suite.
 
 Build the `httpd` service and run all required services in the background.
 
+#### Build
+
+```
+$ docker-compose build
+```
+
+#### Run
+
 ```
 $ docker-compose up -d
 ```
@@ -56,19 +64,19 @@ The default Apache PHP environment for the httpd service is Apache 2.2 / PHP 5.3
 ### Bringing Up the Apache 2.2 / PHP 5.3 (FastCGI) Services
 
 ```
-$ docker-compose -f docker-compose.yml -f docker-compose-v1.yml up -d
+$ docker-compose -f docker-compose.yml -f docker-compose-v1.yml up -d --build
 ```
 
 ### Bringing Up the Apache 2.4 / PHP 5.6 (PHP-FPM) Services
 
 ```
-$ docker-compose -f docker-compose.yml -f docker-compose-v2.yml up -d
+$ docker-compose -f docker-compose.yml -f docker-compose-v2.yml up -d --build
 ```
 
 ### Bringing Up the Apache 2.4 / PHP 7.2 (PHP-FPM) Services
 
 ```
-$ docker-compose -f docker-compose.yml -f docker-compose-v3.yml up -d
+$ docker-compose -f docker-compose.yml -f docker-compose-v3.yml up -d --build
 ```
 
 ## Xdebug debugging
