@@ -7,6 +7,6 @@ services:
     environment:
       APACHE_MPM: "event"
   memcached_1:
-    image: "jdeathe/centos-ssh-memcached:2.0.0"
+    image: "jdeathe/centos-ssh-memcached:2.1.0"
   memcached_2:
-    image: "jdeathe/centos-ssh-memcached:2.0.0"
+    image: "jdeathe/centos-ssh-memcached:2.1.0"

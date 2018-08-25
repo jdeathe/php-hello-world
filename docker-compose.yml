@@ -21,7 +21,7 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php:1.10.5"
+        IMAGE: "jdeathe/centos-ssh-apache-php:1.10.6"
         PACKAGE_NAME: "app"
         PACKAGE_PATH: "/opt/app"
       context: "."
@@ -65,7 +65,7 @@ services:
       - "./var/log:/opt/app/var/log:cached"
   # Memcached session store
   memcached_1:
-    image: "jdeathe/centos-ssh-memcached:1.1.3"
+    image: "jdeathe/centos-ssh-memcached:1.2.0"
     environment:
       MEMCACHED_CACHESIZE: "32"
     networks:
@@ -76,7 +76,7 @@ services:
     sysctls:
       net.core.somaxconn: "1024"
   memcached_2:
-    image: "jdeathe/centos-ssh-memcached:1.1.3"
+    image: "jdeathe/centos-ssh-memcached:1.2.0"
     environment:
       MEMCACHED_CACHESIZE: "32"
     networks:
