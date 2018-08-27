@@ -17,6 +17,14 @@ $viewSettings = new IniSettings(
     )
 );
 
+header(
+    sprintf(
+        'Cache-Control: %s',
+        'no-cache'
+    ),
+    true
+);
+
 Html::printEncoded(
     $viewSettings->get(
         'status_success',
