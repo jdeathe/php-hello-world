@@ -31,6 +31,8 @@ services:
       - "memcached_2"
     environment:
       APACHE_ERROR_LOG_LEVEL: "info"
+      # Maintenance feature requires rewrite_module module.
+      APACHE_LOAD_MODULES: "rewrite_module"
       APACHE_MOD_SSL_ENABLED: "true"
       APACHE_MPM: "prefork"
       APACHE_OPERATING_MODE: "development"
