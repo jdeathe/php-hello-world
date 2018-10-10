@@ -21,7 +21,7 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php:1.10.6"
+        IMAGE: "jdeathe/centos-ssh-apache-php:1.11.0"
         PACKAGE_NAME: "app"
         PACKAGE_PATH: "/opt/app"
       context: "."
