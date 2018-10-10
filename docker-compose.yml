@@ -37,6 +37,7 @@ services:
       APACHE_MPM: "prefork"
       APACHE_OPERATING_MODE: "development"
       APACHE_SERVER_NAME: "php-hello-world.dev.local"
+      APACHE_SSL_CERTIFICATE: "${APACHE_SSL_CERTIFICATE}"
       # XDebug IDE key.
       DBGP_IDEKEY: "${DBGP_IDEKEY}"
       PHP_OPTIONS_SESSION_NAME: "php-hello-world"
