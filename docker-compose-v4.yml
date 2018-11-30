@@ -3,6 +3,6 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php-fcgi:1.11.0"
+        IMAGE: "jdeathe/centos-ssh-apache-php-fcgi:2.0.0"
     environment:
       APACHE_MPM: "worker"

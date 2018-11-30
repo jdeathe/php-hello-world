@@ -67,6 +67,12 @@ The default Apache PHP environment for the httpd service is Apache 2.2 / PHP 5.3
 $ docker-compose -f docker-compose.yml -f docker-compose-v1.yml up -d --build
 ```
 
+### Bringing Up the Apache 2.4 / PHP 5.4 (FastCGI) Services
+
+```
+$ docker-compose -f docker-compose.yml -f docker-compose-v4.yml up -d --build
+```
+
 ### Bringing Up the Apache 2.4 / PHP 5.6 (PHP-FPM) Services
 
 ```
