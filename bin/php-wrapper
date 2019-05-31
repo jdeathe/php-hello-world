@@ -1,25 +1,53 @@
 #!/usr/bin/env bash
 
-source /etc/httpd-bootstrap.conf
+function main ()
+{
+	local -r bin="/usr/bin/php-cgi"
+	local -r nice="/bin/nice"
+	local -r niceness="15"
 
-readonly NICE=/bin/nice
-readonly NICENESS="${PHP_CGI_NICENESS:-15}"
-readonly PHP_CGI=/usr/bin/php-cgi
+	local bin_options
+	local option
+	local -a options
+	local tmp="/var/tmp"
 
-# Used to override the PHP operating mode options
-PHP_OPTIONS="${1:-}"
+	# Parse options
+	while [[ "${#}" -gt 0 ]]
+	do
+		case "${1}" in
+			-d)
+				options+=("${2}")
+				shift 2
+				;;
+			--tmp=*)
+				tmp="${1#*=}"
+				shift 1
+				;;
+		esac
+	done
 
-# PHP child process management should always be disabled with mod_fcgid
-export PHP_FCGI_CHILDREN=0
-export PHP_FCGI_MAX_REQUESTS=15000
-export PHPRC=/etc
-export REDIRECT_STATUS=200
-export TMP="${APACHE_CONTENT_ROOT}/var/tmp"
-export TEMP="${TMP}"
-export TMPDIR="${TMP}"
+	if [[ ${#options[@]} -gt 0 ]]
+	then
+		for option in "${options[@]}"
+		do
+			bin_options+=" -d ${option}"
+		done
+	fi
 
-# FastCGI-enabled PHP executable
-exec ${NICE} \
-	-n ${NICENESS} \
-	${PHP_CGI} \
-	${PHP_OPTIONS}
+	# PHP child process management should always be disabled with mod_fcgid
+	export PHP_FCGI_CHILDREN="0"
+	export PHP_FCGI_MAX_REQUESTS="15000"
+	export PHPRC="/etc"
+	export REDIRECT_STATUS="200"
+	export TMP="${tmp}"
+	export TEMP="${tmp}"
+	export TMPDIR="${tmp}"
+
+	# FastCGI-enabled PHP executable
+	exec ${nice} \
+		-n ${niceness} \
+		${bin} \
+		${bin_options}
+}
+
+main "${@}"
