@@ -1,3 +1,4 @@
+.env
 .env.example
 .git
 .gitignore
@@ -6,3 +7,4 @@ LICENSE
 README-short.txt
 *.md
 !README.md
+*.yml
