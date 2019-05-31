@@ -30,6 +30,10 @@ services:
       - "memcached_1"
       - "memcached_2"
     environment:
+      # APACHE_CUSTOM_LOG_LOCATION: "var/log/apache_access_log"
+      # APACHE_ERROR_LOG_LOCATION: "var/log/apache_error_log"
+      APACHE_CUSTOM_LOG_LOCATION: "/dev/stdout"
+      APACHE_ERROR_LOG_LOCATION: "/dev/stderr"
       APACHE_ERROR_LOG_LEVEL: "info"
       # Maintenance feature requires rewrite_module module.
       APACHE_LOAD_MODULES: "rewrite_module"
@@ -65,7 +69,7 @@ services:
       # Uncomment to mount local working directories into the running container
       # - "./public:/opt/app/public:cached"
       # - "./src:/opt/app/src:cached"
-      - "./var/log:/opt/app/var/log:cached"
+      # - "./var/log:/opt/app/var/log:cached"
   # Memcached session store
   memcached_1:
     image: "jdeathe/centos-ssh-memcached:1.3.1"
