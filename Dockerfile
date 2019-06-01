@@ -1,4 +1,4 @@
-ARG IMAGE="jdeathe/centos-ssh-apache-php:1.10.5"
+ARG IMAGE="jdeathe/centos-ssh-apache-php:1.12.0"
 
 FROM "${IMAGE}"
 
@@ -81,7 +81,7 @@ COPY src \
 RUN $(\
 		if [[ -f /usr/share/php-pecl-apc/apc.php ]]; then \
 			sed -i \
-				-e "s~php_uname(\'n\');~gethostname();~g" \
+				-e "s~php_uname('n');~gethostname();~g" \
 				/usr/share/php-pecl-apc/apc.php; \
 			cp \
 				/usr/share/php-pecl-apc/apc.php \
