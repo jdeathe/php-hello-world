@@ -58,6 +58,14 @@ $navbar = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
 ));
 $navbarItems = $navbar->getAll();
+
+header(
+    sprintf(
+        'Cache-Control: %s',
+        'no-store, must-revalidate'
+    ),
+    true
+);
 ?>
 <!DOCTYPE html>
 <html lang="en">
