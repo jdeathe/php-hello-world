@@ -3,15 +3,15 @@
 		"type": "navbar-item",
 		"id": "5",
 		"attributes": {
-			"label": "Local assets",
-			"url": "/index_alt.php",
+			"label": "CDN assets",
+			"url": "/cdn_assets.php",
 			"condition": {
 				"function": [
 					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
 					"visible"
 				],
 				"parameter": [
-					"/index_alt.php"
+					"/cdn_assets.php"
 				]
 			}
 		}
