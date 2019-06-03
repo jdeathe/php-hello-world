@@ -19,6 +19,14 @@ require_once 'Output/Html.php';
 require_once 'Output/Info.php';
 require_once 'Settings/IniSettings.php';
 
+header(
+    sprintf(
+        'Cache-Control: %s',
+        'no-store, must-revalidate'
+    ),
+    true
+);
+
 $request = new Request(
     $_SERVER
 );
@@ -58,14 +66,6 @@ $navbar = NavigationBar::create(new JsonFileCollection(
     '../etc/collections/navbar-item.json'
 ));
 $navbarItems = $navbar->getAll();
-
-header(
-    sprintf(
-        'Cache-Control: %s',
-        'no-store, must-revalidate'
-    ),
-    true
-);
 ?>
 <!DOCTYPE html>
 <html lang="en">
