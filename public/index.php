@@ -69,7 +69,7 @@ $navbarItems = $navbar->getAll();
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
             <div class="container">
-                <span class="navbar-brand"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></span>
+                <a class="navbar-brand"<?php print $navbar->isHomePage() ? '' : ' href="/"'; ?>><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
