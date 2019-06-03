@@ -196,4 +196,27 @@ class NavigationBar implements CollectionItemsInterface {
 
         return false;
     }
+
+     /**
+     * Determine if the current page is the homepage.
+     *
+     * @param string $defaultPath The default path to the site's homepage.
+     * @param string $index The PHP directory index file.
+     * @return boolean
+     */
+    public function isHomePage($defaultPath = '/', $index = 'index.php') {
+        $url = (string) $defaultPath;
+        $homeUrl = $url . $index;
+
+        if (
+            preg_match(
+                "~^(?:$url|$homeUrl(?:\?.*)?)?$~",
+                $_SERVER['REQUEST_URI']
+            )
+        ) {
+            return true;
+        }
+
+        return false;
+    }
 }
