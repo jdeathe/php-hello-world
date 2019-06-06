@@ -1,4 +1,4 @@
-ARG IMAGE="jdeathe/centos-ssh-apache-php:1.10.5"
+ARG IMAGE="jdeathe/centos-ssh-apache-php:1.12.0"
 
 FROM "${IMAGE}"
 
@@ -78,7 +78,17 @@ COPY public \
 COPY src \
 	${PACKAGE_PATH}/src/
 
-RUN chown -R \
+RUN $(\
+		if [[ -f /usr/share/php-pecl-apc/apc.php ]]; then \
+			sed -i \
+				-e "s~php_uname('n');~gethostname();~g" \
+				/usr/share/php-pecl-apc/apc.php; \
+			cp \
+				/usr/share/php-pecl-apc/apc.php \
+				${PACKAGE_PATH}/public/_apc.php; \
+		fi \
+	) \
+	&& chown -R \
 		${APACHE_SYSTEM_USER}:${APACHE_RUN_GROUP} \
 		${PACKAGE_PATH} \
 	&& find ${PACKAGE_PATH} -type d -exec chmod 750 {} + \

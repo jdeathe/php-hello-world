@@ -7,6 +7,7 @@ use jdeathe\PhpHelloWorld\Collections\JsonFileCollection;
 use jdeathe\PhpHelloWorld\Collections\NavigationBar;
 use jdeathe\PhpHelloWorld\Http\Request;
 use jdeathe\PhpHelloWorld\Output\Html;
+use jdeathe\PhpHelloWorld\Output\Info;
 use jdeathe\PhpHelloWorld\Settings\IniSettings;
 
 require_once 'Alerts/Alerts.php';
@@ -15,7 +16,16 @@ require_once 'Collections/JsonFileCollection.php';
 require_once 'Collections/NavigationBar.php';
 require_once 'Http/Request.php';
 require_once 'Output/Html.php';
+require_once 'Output/Info.php';
 require_once 'Settings/IniSettings.php';
+
+header(
+    sprintf(
+        'Cache-Control: %s',
+        'no-store, must-revalidate'
+    ),
+    true
+);
 
 $request = new Request(
     $_SERVER
@@ -63,13 +73,13 @@ $navbarItems = $navbar->getAll();
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title><?php Html::printEncoded($viewSettings->get('title', 'PHP "Hello, world!"')); ?></title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20=" crossorigin="anonymous">
+        <link rel="stylesheet" href="/assets/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous">
         <link rel="stylesheet" href="/assets/css/main.min.css">
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="/"><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></a>
+                <a class="navbar-brand"<?php print $navbar->isHomePage() ? '' : ' href="/"'; ?>><?php Html::printEncoded($viewSettings->get('project_name', 'PHP "Hello, world!"')); ?></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -93,7 +103,7 @@ $navbarItems = $navbar->getAll();
 ?>
             </div>
         </nav>
-        <div class="container-flow">
+        <div class="container">
 <?php
     foreach ($alerts->getAll() as $alert) {
 ?>
@@ -112,12 +122,14 @@ $navbarItems = $navbar->getAll();
 <?php
     }
 ?>
-            <div class="embed-flow">
-                <iframe src="/_apc.php" frameborder="0" width="100%" height="100%"></iframe>
+            <div class="table-responsive">
+<?php
+    Info::php();
+?>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha256-pS96pU17yq+gVu4KBQJi38VpSuKN7otMrDQprzf/DWY=" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha256-5+02zu5UULQkO7w1GIr6vftCgMfFdZcAHeDtFnKZsBs=" crossorigin="anonymous"></script>
+        <script src="/assets/jquery/3.3.1/jquery.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+        <script src="/assets/popper.js/1.14.3/umd/popper.min.js" integrity="sha256-98vAGjEDGN79TjHkYWVD4s87rvWkdWLHPs5MC3FvFX4=" crossorigin="anonymous"></script>
+        <script src="/assets/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
     </body>
 </html>

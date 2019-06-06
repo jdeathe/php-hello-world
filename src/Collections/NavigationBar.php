@@ -132,9 +132,9 @@ class NavigationBar implements CollectionItemsInterface {
      */
     private static function visible($url) {
         switch ($url) {
-            case '/_phpinfo.php':
-            case '/_sessioninfo.php':
-            case '/index_alt.php':
+            case '/phpinfo.php':
+            case '/sessioninfo.php':
+            case '/cdn_assets.php':
                 if (realpath(
                         $_SERVER['DOCUMENT_ROOT'] . $url
                 )) {
@@ -143,7 +143,7 @@ class NavigationBar implements CollectionItemsInterface {
                     return false;
                 }
                 break;
-            case '/_apcinfo.php':
+            case '/apcinfo.php':
                 if (extension_loaded('apc') &&
                     realpath(
                         $_SERVER['DOCUMENT_ROOT'] . '/_apc.php'
@@ -190,6 +190,29 @@ class NavigationBar implements CollectionItemsInterface {
             is_object($item)
             && property_exists($item, 'url')
             && $item->url == $_SERVER['REQUEST_URI']
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+     /**
+     * Determine if the current page is the homepage.
+     *
+     * @param string $defaultPath The default path to the site's homepage.
+     * @param string $index The PHP directory index file.
+     * @return boolean
+     */
+    public function isHomePage($defaultPath = '/', $index = 'index.php') {
+        $url = (string) $defaultPath;
+        $homeUrl = $url . $index;
+
+        if (
+            preg_match(
+                "~^(?:$url|$homeUrl(?:\?.*)?)?$~",
+                $_SERVER['REQUEST_URI']
+            )
         ) {
             return true;
         }

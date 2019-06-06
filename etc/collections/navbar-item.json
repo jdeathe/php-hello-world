@@ -3,15 +3,15 @@
 		"type": "navbar-item",
 		"id": "5",
 		"attributes": {
-			"label": "Local assets",
-			"url": "/index_alt.php",
+			"label": "CDN assets",
+			"url": "/cdn_assets.php",
 			"condition": {
 				"function": [
 					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
 					"visible"
 				],
 				"parameter": [
-					"/index_alt.php"
+					"/cdn_assets.php"
 				]
 			}
 		}
@@ -20,14 +20,14 @@
 		"id": "1",
 		"attributes": {
 			"label": "PHP info",
-			"url": "/_phpinfo.php",
+			"url": "/phpinfo.php",
 			"condition": {
 				"function": [
 					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
 					"visible"
 				],
 				"parameter": [
-					"/_phpinfo.php"
+					"/phpinfo.php"
 				]
 			}
 		}
@@ -36,14 +36,14 @@
 		"id": "2",
 		"attributes": {
 			"label": "APC info",
-			"url": "/_apcinfo.php",
+			"url": "/apcinfo.php",
 			"condition": {
 				"function": [
 					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
 					"visible"
 				],
 				"parameter": [
-					"/_apcinfo.php"
+					"/apcinfo.php"
 				]
 			}
 		}
@@ -52,14 +52,14 @@
 		"id": "6",
 		"attributes": {
 			"label": "Session info",
-			"url": "/_sessioninfo.php",
+			"url": "/sessioninfo.php",
 			"condition": {
 				"function": [
 					"jdeathe\\PhpHelloWorld\\Collections\\NavigationBar",
 					"visible"
 				],
 				"parameter": [
-					"/_sessioninfo.php"
+					"/sessioninfo.php"
 				]
 			}
 		}
