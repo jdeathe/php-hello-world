@@ -1,4 +1,4 @@
-ARG IMAGE="jdeathe/centos-ssh-apache-php:1.12.0"
+ARG IMAGE="jdeathe/centos-ssh-apache-php:1.13.0"
 
 FROM "${IMAGE}"
 
