@@ -6,3 +6,5 @@ services:
         IMAGE: "jdeathe/centos-ssh-apache-php-fcgi:2.2.0"
     environment:
       APACHE_MPM: "worker"
+  redis:
+    image: "jdeathe/centos-ssh-redis:3.1.0"
