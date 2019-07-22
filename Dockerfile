@@ -8,14 +8,14 @@ ARG PACKAGE_PATH="/opt/${PACKAGE_NAME}"
 # Source image's default Apache DocumetRoot public directory is public_html.
 # Set to public for this project. Package name and path are based on build
 # arguments - recreate their environment variables too.
-ENV APACHE_CONTENT_ROOT="/var/www/${PACKAGE_NAME}" \
+ENV \
+	APACHE_CONTENT_ROOT="/var/www/${PACKAGE_NAME}" \
 	APACHE_PUBLIC_DIRECTORY="public" \
 	PACKAGE_PATH="/opt/${PACKAGE_NAME}"
 
 RUN $(\
 		if [[ ${IMAGE} =~ :1\.[0-9]+\.[0-9]+ ]]; then \
-			rpm --rebuilddb \
-			&& yum -y install \
+			yum -y install \
 				--setopt=tsflags=nodocs \
 				--disableplugin=fastestmirror \
 				php-pecl-xdebug \
@@ -26,8 +26,7 @@ RUN $(\
 				-e 's~^\[~\n\[~g' \
 				/etc/php.d/xdebug.ini; \
 		elif [[ ${IMAGE} =~ :2\.[0-9]+\.[0-9]+ ]]; then \
-			rpm --rebuilddb \
-			&& yum -y install \
+			yum -y install \
 				--setopt=tsflags=nodocs \
 				--disableplugin=fastestmirror \
 				php56u-pecl-xdebug \
@@ -67,8 +66,6 @@ RUN $(\
 	&& rm -rf ${PACKAGE_PATH} \
 	&& mkdir -p ${PACKAGE_PATH}/var/{log,session,tmp}
 
-COPY bin \
-	${PACKAGE_PATH}/bin/
 COPY etc \
 	${PACKAGE_PATH}/etc/
 COPY etc/php.d/51-php.ini.develop \
@@ -93,5 +90,4 @@ RUN $(\
 		${PACKAGE_PATH} \
 	&& find ${PACKAGE_PATH} -type d -exec chmod 750 {} + \
 	&& find ${PACKAGE_PATH}/var -type d -exec chmod 770 {} + \
-	&& find ${PACKAGE_PATH} -type f -exec chmod 640 {} + \
-	&& find ${PACKAGE_PATH}/bin -type f -exec chmod 750 {} +
+	&& find ${PACKAGE_PATH} -type f -exec chmod 640 {} +
