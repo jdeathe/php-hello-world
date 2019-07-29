@@ -3,7 +3,7 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php:3.3.0"
+        IMAGE: "jdeathe/centos-ssh-apache-php:3.3.1"
     environment:
       APACHE_MPM: "event"
   redis:
