@@ -46,9 +46,10 @@ services:
       PHP_OPTIONS_SESSION_NAME: "php-hello-world"
       PHP_OPTIONS_SESSION_SAVE_HANDLER: "redis"
       PHP_OPTIONS_SESSION_SAVE_PATH: "redis:6379"
+      # Enable sshd
+      ENABLE_SSHD_WRAPPER: "true"
+      ENABLE_SSHD_BOOTSTRAP: "true"
       SSH_AUTHORIZED_KEYS: "${SSH_AUTHORIZED_KEYS}"
-      SSH_AUTOSTART_SSHD: "true"
-      SSH_AUTOSTART_SSHD_BOOTSTRAP: "true"
       SSH_SUDO: "ALL=(ALL) NOPASSWD:ALL"
       SSH_USER: "${SSH_USER}"
     networks:
