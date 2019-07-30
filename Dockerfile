@@ -13,53 +13,37 @@ ENV \
 	APACHE_PUBLIC_DIRECTORY="public" \
 	PACKAGE_PATH="/opt/${PACKAGE_NAME}"
 
-RUN $(\
-		if [[ ${IMAGE} =~ :1\.[0-9]+\.[0-9]+ ]]; then \
-			yum -y install \
-				--setopt=tsflags=nodocs \
-				--disableplugin=fastestmirror \
-				php-pecl-xdebug \
-			&& sed -i \
-				-e 's~^; .*$~~' \
-				-e 's~^;*$~~' \
-				-e '/^$/d' \
-				-e 's~^\[~\n\[~g' \
-				/etc/php.d/xdebug.ini; \
-		elif [[ ${IMAGE} =~ :2\.[0-9]+\.[0-9]+ ]]; then \
-			yum -y install \
-				--setopt=tsflags=nodocs \
-				--disableplugin=fastestmirror \
-				php56u-pecl-xdebug \
-			&& sed -i \
-				-e 's~^; .*$~~' \
-				-e 's~^;*$~~' \
-				-e '/^$/d' \
-				-e 's~^\[~\n\[~g' \
-				/etc/php.d/15-xdebug.ini \
-			&& sed -i \
-				-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
-				-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
-				-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
-				/etc/php.d/10-opcache.ini; \
-		elif [[ ${IMAGE} =~ :3\.[0-9]+\.[0-9]+ ]]; then \
-			rpm --rebuilddb \
-			&& yum -y install \
-				--setopt=tsflags=nodocs \
-				--disableplugin=fastestmirror \
-				php72u-pecl-xdebug \
-			&& sed -i \
-				-e 's~^; .*$~~' \
-				-e 's~^;*$~~' \
-				-e '/^$/d' \
-				-e 's~^\[~\n\[~g' \
-				/etc/php.d/15-xdebug.ini \
-			&& sed -i \
-				-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
-				-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
-				-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
-				/etc/php.d/10-opcache.ini; \
-		fi \
-	) \
+SHELL ["/bin/bash", "-c"]
+
+RUN if rpm -q --quiet php72u-common; \
+	then \
+		yum -y install \
+			--setopt=tsflags=nodocs \
+			--disableplugin=fastestmirror \
+			php72u-pecl-xdebug \
+		&& sed -i \
+			-e 's~^; .*$~~' \
+			-e 's~^;*$~~' \
+			-e '/^$/d' \
+			-e 's~^\[~\n\[~g' \
+			/etc/php.d/15-xdebug.ini \
+		&& sed -i \
+			-e 's~^;\(opcache.enable_cli=\).*$~\11~g' \
+			-e 's~^\(opcache.max_accelerated_files=\).*$~\132531~g' \
+			-e 's~^;\(opcache.validate_timestamps=\).*$~\11~g' \
+			/etc/php.d/10-opcache.ini; \
+	else \
+		yum -y install \
+			--setopt=tsflags=nodocs \
+			--disableplugin=fastestmirror \
+			php-pecl-xdebug \
+		&& sed -i \
+			-e 's~^; .*$~~' \
+			-e 's~^;*$~~' \
+			-e '/^$/d' \
+			-e 's~^\[~\n\[~g' \
+			/etc/php.d/xdebug.ini; \
+	fi \
 	&& rm -rf /var/cache/yum/* \
 	&& yum clean all \
 	&& rm -rf /opt/app \
@@ -75,16 +59,14 @@ COPY public \
 COPY src \
 	${PACKAGE_PATH}/src/
 
-RUN $(\
-		if [[ -f /usr/share/php-pecl-apc/apc.php ]]; then \
-			sed -i \
-				-e "s~php_uname('n');~gethostname();~g" \
-				/usr/share/php-pecl-apc/apc.php; \
-			cp \
-				/usr/share/php-pecl-apc/apc.php \
-				${PACKAGE_PATH}/public/_apc.php; \
-		fi \
-	) \
+RUN if [[ -f /usr/share/php-pecl-apc/apc.php ]]; then \
+		sed -i \
+			-e "s~php_uname('n');~gethostname();~g" \
+			/usr/share/php-pecl-apc/apc.php; \
+		cp \
+			/usr/share/php-pecl-apc/apc.php \
+			${PACKAGE_PATH}/public/_apc.php; \
+	fi \
 	&& chown -R \
 		${APACHE_SYSTEM_USER}:${APACHE_RUN_GROUP} \
 		${PACKAGE_PATH} \
