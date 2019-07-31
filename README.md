@@ -87,10 +87,10 @@ Set the appropriate xdebug.idekey configuration value using the `DBGP_IDEKEY` en
 
 ### Port Forwarding
 
-Xdebug is configured with `xdebug.remote_host = localhost` so SSH can be used to forward the docker host's local port 9000 to port 9000 on the host running the IDE.
+Xdebug is configured with `xdebug.remote_host = localhost` and `xdebug.remote_port = 9127` so SSH can be used to forward the docker host's local port `9127` to port `9000` on the host running the IDE.
 
-The following command connects to the httpd container on port 9022 and forwards the remote port 9000 to localhost on local port 9000 - the `-f` and `-N` options are used to run it in the background and forward ports only. If your IDE is configured to listen on a port other than 9000 you would need to modify the last, (hostport), value.
+The following command connects to the httpd container on port `9022` and forwards the remote port `9127` to `localhost` on local port `9000` - the `-f` and `-N` options are used to run it in the background and forward ports only. If your IDE is configured to listen on a port other than `9000` you would need to modify the last, (hostport), value.
 
 ```
-$ ssh -p 9022 -fNR 9000:localhost:9000 localhost
+$ ssh -p 9022 -fNR localhost:9127:localhost:9000 localhost
 ```
