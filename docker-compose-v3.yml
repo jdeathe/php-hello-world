@@ -3,10 +3,8 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php:3.2.0"
+        IMAGE: "jdeathe/centos-ssh-apache-php:3.3.1"
     environment:
       APACHE_MPM: "event"
-  memcached_1:
-    image: "jdeathe/centos-ssh-memcached:2.2.1"
-  memcached_2:
-    image: "jdeathe/centos-ssh-memcached:2.2.1"
+  redis:
+    image: "jdeathe/centos-ssh-redis:3.1.0"

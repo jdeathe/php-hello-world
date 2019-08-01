@@ -73,12 +73,6 @@ $ docker-compose -f docker-compose.yml -f docker-compose-v1.yml up -d --build
 $ docker-compose -f docker-compose.yml -f docker-compose-v4.yml up -d --build
 ```
 
-### Bringing Up the Apache 2.4 / PHP 5.6 (PHP-FPM) Services
-
-```
-$ docker-compose -f docker-compose.yml -f docker-compose-v2.yml up -d --build
-```
-
 ### Bringing Up the Apache 2.4 / PHP 7.2 (PHP-FPM) Services
 
 ```
@@ -93,10 +87,10 @@ Set the appropriate xdebug.idekey configuration value using the `DBGP_IDEKEY` en
 
 ### Port Forwarding
 
-Xdebug is configured with `xdebug.remote_host = localhost` so SSH can be used to forward the docker host's local port 9000 to port 9000 on the host running the IDE.
+Xdebug is configured with `xdebug.remote_host = localhost` and `xdebug.remote_port = 9127` so SSH can be used to forward the docker host's local port `9127` to port `9000` on the host running the IDE.
 
-The following command connects to the httpd container on port 9022 and forwards the remote port 9000 to localhost on local port 9000 - the `-f` and `-N` options are used to run it in the background and forward ports only. If your IDE is configured to listen on a port other than 9000 you would need to modify the last, (hostport), value.
+The following command connects to the httpd container on port `9022` and forwards the remote port `9127` to `localhost` on local port `9000` - the `-f` and `-N` options are used to run it in the background and forward ports only. If your IDE is configured to listen on a port other than `9000` you would need to modify the last, (hostport), value.
 
 ```
-$ ssh -p 9022 -fNR 9000:localhost:9000 localhost
+$ ssh -p 9022 -fNR localhost:9127:localhost:9000 localhost
 ```

@@ -21,14 +21,13 @@ services:
   httpd:
     build:
       args:
-        IMAGE: "jdeathe/centos-ssh-apache-php:1.12.0"
+        IMAGE: "jdeathe/centos-ssh-apache-php:1.13.1"
         PACKAGE_NAME: "app"
         PACKAGE_PATH: "/opt/app"
       context: "."
       dockerfile: "Dockerfile"
     depends_on:
-      - "memcached_1"
-      - "memcached_2"
+      - "redis"
     environment:
       # APACHE_CUSTOM_LOG_LOCATION: "var/log/apache_access_log"
       # APACHE_ERROR_LOG_LOCATION: "var/log/apache_error_log"
@@ -45,11 +44,12 @@ services:
       # XDebug IDE key.
       DBGP_IDEKEY: "${DBGP_IDEKEY}"
       PHP_OPTIONS_SESSION_NAME: "php-hello-world"
-      PHP_OPTIONS_SESSION_SAVE_HANDLER: "memcached"
-      PHP_OPTIONS_SESSION_SAVE_PATH: "memcached_1:11211:50,memcached_2:11211:50"
+      PHP_OPTIONS_SESSION_SAVE_HANDLER: "redis"
+      PHP_OPTIONS_SESSION_SAVE_PATH: "redis:6379"
+      # Enable sshd
+      ENABLE_SSHD_WRAPPER: "true"
+      ENABLE_SSHD_BOOTSTRAP: "true"
       SSH_AUTHORIZED_KEYS: "${SSH_AUTHORIZED_KEYS}"
-      SSH_AUTOSTART_SSHD: "true"
-      SSH_AUTOSTART_SSHD_BOOTSTRAP: "true"
       SSH_SUDO: "ALL=(ALL) NOPASSWD:ALL"
       SSH_USER: "${SSH_USER}"
     networks:
@@ -70,26 +70,15 @@ services:
       # - "./public:/opt/app/public:cached"
       # - "./src:/opt/app/src:cached"
       # - "./var/log:/opt/app/var/log:cached"
-  # Memcached session store
-  memcached_1:
-    image: "jdeathe/centos-ssh-memcached:1.3.1"
+  # Session store
+  redis:
+    image: "jdeathe/centos-ssh-redis:1.2.0"
     environment:
-      MEMCACHED_CACHESIZE: "32"
+      REDIS_MAXMEMORY: "32mb"
     networks:
       tier4:
         aliases:
-          - "memcached_1"
-    restart: "always"
-    sysctls:
-      net.core.somaxconn: "1024"
-  memcached_2:
-    image: "jdeathe/centos-ssh-memcached:1.3.1"
-    environment:
-      MEMCACHED_CACHESIZE: "32"
-    networks:
-      tier4:
-        aliases:
-          - "memcached_2"
+          - "redis"
     restart: "always"
     sysctls:
       net.core.somaxconn: "1024"
